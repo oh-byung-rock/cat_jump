@@ -1,5 +1,7 @@
 import pygame, sys, random, ctypes
 from pygame.locals import * # pygame에 있는 모든기능을 사용
+from create import create
+import configure
 
 # 사운드 관련 (숫자는 이해하지말고 그냥 쓰기)
 pygame.mixer.pre_init(22050, -16, 2, 512)
@@ -11,19 +13,12 @@ pygame.mixer.init(22050,-16,2,512)
 # 하지만 이를 무시하고싶다면 *speed_plus처럼 하면됩니다.
 # 하지만 단점이 매개변수를 튜플로 인식하여 연산에서 사용할수없게 됩니다.
 def main(speed_plus,stage):
-    # 게임 초기화 정보
-    pygame.init()
-    user32 = ctypes.windll.user32
-    user_width = user32.GetSystemMetrics(0) * 0.95  # 가로 해상도
-    user_height = user32.GetSystemMetrics(1) * 0.9 # 세로 해상도
-    screen_width = user_width
-    screen_height = user_height
     # screen 이란 객체를 생성
-    screen = pygame.display.set_mode((screen_width,screen_height))
+    screen = pygame.display.set_mode((configure.screen_width,configure.screen_height))
     # 제목 생성
     pygame.display.set_caption('cat game')
     bgImage = pygame.image.load('pictures/background.jpg')
-    bgImage = pygame.transform.scale(bgImage, (screen_width, screen_height))
+    bgImage = pygame.transform.scale(bgImage, (configure.screen_width, configure.screen_height))
 
     # 플레이어 생성
     # 가로 105, 세로 120 객체를 생성, 이후 객체의 왼쪽상단점의 위치를 다음 좌표로 설정
@@ -31,10 +26,10 @@ def main(speed_plus,stage):
     player_img = pygame.image.load('pictures/cat.png') # 이미지 할당
     player_img = pygame.transform.scale(player_img, (105,120)) # 이미지 크기 조정
 
-    devil = pygame.Rect(screen_width,screen_height-135-142+5,135,135) # 135(캐릭터높이) 142(바닥높이) 5(여유)
+    devil = pygame.Rect(configure.screen_width,configure.screen_height-135-142+5,135,135) # 135(캐릭터높이) 142(바닥높이) 5(여유)
     devil_img = pygame.image.load('pictures/devil.png')
 
-    foothold = pygame.Rect((screen_width + 105) / 2, (screen_height) / 2, 345, 81)
+    foothold = pygame.Rect((configure.screen_width + 105) / 2, (configure.screen_height) / 2, 345, 81)
     foothold_img = pygame.image.load('pictures/foothold.png')
     foothold_img = pygame.transform.scale(foothold_img, (345, 81)) # 가로, 세로
 
@@ -77,10 +72,10 @@ def main(speed_plus,stage):
 
     # devil 충돌 후 이벤트
     paused = False
-    overlay = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
+    overlay = pygame.Surface((configure.screen_width, configure.screen_height), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 180))
 
-    overlay1 = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
+    overlay1 = pygame.Surface((configure.screen_width, configure.screen_height), pygame.SRCALPHA)
     overlay1.fill((0, 0, 0))
     # 폰트 객체
     font = pygame.font.SysFont('Segoe UI',30,True,False) # italic : 글자 기울어서 표현
@@ -90,9 +85,6 @@ def main(speed_plus,stage):
     stars = []
     star_speed = 10  # 별 속도
     is_attack = False  # 공격 여부
-
-    # 체력바 기본
-    hp_bs = 0
 
     # 충돌 시 방향 전환을 방지하는 플래그
     devil_direction_changed = False
@@ -109,53 +101,7 @@ def main(speed_plus,stage):
     gameover = False
     wendywin = False
 
-    # 스테이지
-    stage = stage
-
-    def create(*speed_plus):
-        global feed_img, feed_img1
-
-        # 먹이 객체 리스트(1층)
-        a = 200
-        d = 7
-        e = 0
-
-        for i in range(d):
-            if a > screen_width-115 :
-                break
-
-            c = random.randint(4,8)
-            if a+(75*c) > screen_width-115:
-                break
-
-            b= random.randint(a, a+(75*c))
-            feed1 = pygame.Rect(b, screen_height - 142 -80 -20, 70,80) # 142(지면높이) 80(사료높이) 20(여유)
-            feeds1.append(feed1)
-            a = b + 80
-            e = e + 1
-        feed_img1 = pygame.image.load('pictures/feed.png')
-        feed_img1 = pygame.transform.scale(feed_img1,(70,80)) # 객체 맞춰서 이미지를 조정하기
-        print('1층생성', e)
-
-        # 먹이 객체 리스트(2층)
-        a1 = foothold.left
-        e1 = 0
-        for i in range(d-e):
-            if a1 > foothold.right - 70 :
-                break
-            c1 = random.randint(1,3)
-            if a1+(75*c1) > foothold.right - 70 :
-                break
-            b1 = random.randint(a1, a1 + (75 * c1))
-            feed = pygame.Rect(b1, foothold.top-10-80, 70,80)
-            feeds.append(feed)
-            a1 = b1 + 80
-            e1 = e1 + 1
-        print('2층 생성',e1)
-        feed_img = pygame.image.load('pictures/feed.png')
-        feed_img = pygame.transform.scale(feed_img,(70,80)) # 객체 맞춰서 이미지를 조정하기
-
-    create()
+    feed_img, feed_img1, feeds, feeds1 = create(configure.screen_width, configure.screen_height, foothold,feeds,feeds1)
     # 게임 실행에대해 처리되는 코드
     while True:
         dt = clock.tick(60) # 1초에 60번(hz) 업데이트
@@ -166,7 +112,7 @@ def main(speed_plus,stage):
                 pygame.quit()
                 sys.exit()
             if event.type == TIMER_EVENT:
-                create()
+                feed_img, feed_img1, feeds, feeds1 = create(configure.screen_width, configure.screen_height, foothold,feeds,feeds1)
                 pygame.time.set_timer(TIMER_EVENT, 0)
                 timer_active = False
 
@@ -206,48 +152,49 @@ def main(speed_plus,stage):
 
         # 체력바
         hp100 = pygame.Rect(devil.left + 12, devil.top - 25, 135, 135)
-        if hp_bs == 0:
+        if configure.hp_bs == 0:
             hp100_img = pygame.image.load('pictures/hp98.png')
 
-        elif hp_bs == 1:
+        elif configure.hp_bs == 1:
             hp100_img = pygame.image.load('pictures/hp84.png')
             if devil_speed < 0:
                 devil_speed = -0.3
             else:
                 devil_speed = 0.3
 
-        elif hp_bs == 2:
+        elif configure.hp_bs == 2:
             hp100_img = pygame.image.load('pictures/hp70.png')
             if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (hp_bs-1))
+                devil_speed = -0.3 - (speed_plus * (configure.hp_bs-1))
             else:
-                devil_speed = 0.3 + (speed_plus * (hp_bs-1))
-        elif hp_bs == 3:
+                devil_speed = 0.3 + (speed_plus * (configure.hp_bs-1))
+        elif configure.hp_bs == 3:
             hp100_img = pygame.image.load('pictures/hp56.png')
             if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (hp_bs - 1))
+                devil_speed = -0.3 - (speed_plus * (configure.hp_bs - 1))
             else:
-                devil_speed = 0.3 + (speed_plus * (hp_bs - 1))
-        elif hp_bs == 4:
+                devil_speed = 0.3 + (speed_plus * (configure.hp_bs - 1))
+        elif configure.hp_bs == 4:
             hp100_img = pygame.image.load('pictures/hp42.png')
             if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (hp_bs - 1))
+                devil_speed = -0.3 - (speed_plus * (configure.hp_bs - 1))
             else:
-                devil_speed = 0.3 + (speed_plus * (hp_bs - 1))
-        elif hp_bs == 5:
+                devil_speed = 0.3 + (speed_plus * (configure.hp_bs - 1))
+        elif configure.hp_bs == 5:
             hp100_img = pygame.image.load('pictures/hp28.png')
             if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (hp_bs - 1))
+                devil_speed = -0.3 - (speed_plus * (configure.hp_bs - 1))
             else:
-                devil_speed = 0.3 + (speed_plus * (hp_bs - 1))
-        elif hp_bs == 6:
+                devil_speed = 0.3 + (speed_plus * (configure.hp_bs - 1))
+        elif configure.hp_bs == 6:
             hp100_img = pygame.image.load('pictures/hp14.png')
             if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (hp_bs - 1))
+                devil_speed = -0.3 - (speed_plus * (configure.hp_bs - 1))
             else:
-                devil_speed = 0.3 + (speed_plus * (hp_bs - 1))
+                devil_speed = 0.3 + (speed_plus * (configure.hp_bs - 1))
         else:
             hp100_img = pygame.image.load('pictures/hp0.png')
+            configure.hp_bs = 0
             paused = True
             wendywin = True
 
@@ -257,7 +204,7 @@ def main(speed_plus,stage):
             if key[K_LEFT] and player.left >= 0 :
                 player.left = player.left - speed * dt
                 va = 1
-            elif key[K_RIGHT] and player.right <= screen_width:
+            elif key[K_RIGHT] and player.right <= configure.screen_width:
                 player.right = player.right + speed * dt
                 va = 2
             else :
@@ -277,8 +224,8 @@ def main(speed_plus,stage):
 
             devil.left -= devil_speed * dt
 
-            if devil.right >= screen_width:
-                devil.right = screen_width
+            if devil.right >= configure.screen_width:
+                devil.right = configure.screen_width
                 devil_speed *= -1
             elif devil.left <= 0:
                 devil.left = 0
@@ -297,7 +244,7 @@ def main(speed_plus,stage):
                 screen.blit(star_img, star["rect"])
                 stars.append(star)  # 별 리스트에 추가
                 score -= 1
-                is_attack = True  # 연속 생성 방지
+                is_attack = True  # 잔상처럼 연속 생성 방지
 
             elif key[K_q] and key[K_LEFT] and score > 0 and not is_attack:
                 star = {
@@ -308,7 +255,7 @@ def main(speed_plus,stage):
                 screen.blit(star_img, star["rect"])
                 stars.append(star)  # 별 리스트에 추가
                 score -= 1
-                is_attack = True  # 연속 생성 방지
+                is_attack = True  # 잔상처럼 연속 생성 방지
 
             if not key[K_q] and key[K_RIGHT]:
                 is_attack = False
@@ -329,7 +276,7 @@ def main(speed_plus,stage):
                     #     devil_speed *= -1
                     # elif star["direction"] == "left" and devil_speed < 0:
                     #     devil_speed *= -1
-                    hp_bs += 1
+                    configure.hp_bs += 1
                     continue  # 충돌한 별은 리스트에 추가하지 않음 (즉시 삭제됨)
                 if star["direction"] == "right" and star["rect"].right < 1750:  # 화면을 벗어나지 않으면 계속 이동
                     new_stars.append(star)
@@ -341,7 +288,7 @@ def main(speed_plus,stage):
 
             stars = new_stars  # 리스트 갱신
 
-        # if key[K_RIGHT] and player.right <= screen_width:
+        # if key[K_RIGHT] and player.right <= configure.screen_width:
         #     player.right = player.right + speed * dt
         #     va = 2
         # else :
@@ -350,8 +297,8 @@ def main(speed_plus,stage):
         # 점프 구현
         player.top = player.top + y_vel
         y_vel += 1
-        if player.bottom >= (screen_height * 0.85):
-            player.bottom = (screen_height * 0.85)
+        if player.bottom >= (configure.screen_height * 0.85):
+            player.bottom = (configure.screen_height * 0.85)
             y_vel = 0
             jump_count = 2
             jump_timer = 0
@@ -416,8 +363,8 @@ def main(speed_plus,stage):
                 score += 1
             if stage == 2 :
                 if devil.colliderect(f):
-                    if hp_bs > 0 :
-                       hp_bs -= 1
+                    if configure.hp_bs > 0 :
+                       configure.hp_bs -= 1
                     feeds1.remove(f)
             screen.blit(feed_img1,f)
 
@@ -446,13 +393,13 @@ def main(speed_plus,stage):
 
             if wendywin:
                 screen.blit(overlay1, (0, 0))
-                win = pygame.Rect((screen_width-400) / 2, (screen_height-580)/2, 400, 200)
+                win = pygame.Rect((configure.screen_width-400) / 2, (configure.screen_height-580)/2, 400, 200)
                 win_img = pygame.image.load('menu/wendywin.png')
                 win_img = pygame.transform.scale(win_img, (400, 200))
                 screen.blit(win_img, win)
 
                 if stage == 1 :
-                    next = pygame.Rect((screen_width + 350) / 2, (screen_height-415+wwa)/2, 400, 200)
+                    next = pygame.Rect((configure.screen_width + 350) / 2, (configure.screen_height-415+wwa)/2, 400, 200)
                     if next.collidepoint(mouse_x, mouse_y):
                         next_cu = True
                         next_img = pygame.image.load('menu/next_yc.png')
@@ -462,12 +409,12 @@ def main(speed_plus,stage):
                     screen.blit(next_img, next)
             elif gameover:
                 screen.blit(overlay1, (0, 0))
-                lose = pygame.Rect((screen_width - 400) / 2, (screen_height - 580) / 2, 350, 160)
+                lose = pygame.Rect((configure.screen_width - 400) / 2, (configure.screen_height - 580) / 2, 350, 160)
                 lose_img = pygame.image.load('menu/gameover.png')
                 lose_img = pygame.transform.scale(lose_img, (400, 200))
                 screen.blit(lose_img, lose)
 
-                do_over = pygame.Rect((screen_width + 350) / 2, (screen_height-415+wwa)/2, 400, 200)
+                do_over = pygame.Rect((configure.screen_width + 350) / 2, (configure.screen_height-415+wwa)/2, 400, 200)
                 if do_over.collidepoint(mouse_x, mouse_y):
                     do_over_cu = True
                     do_over_img = pygame.image.load('menu/do_over_yc.png')
@@ -486,7 +433,7 @@ def main(speed_plus,stage):
             #         esc_cu = False
 
             # 새게임
-            new = pygame.Rect((screen_width-225) / 2, (screen_height-415+wwa)/2, 150, 70)
+            new = pygame.Rect((configure.screen_width-225) / 2, (configure.screen_height-415+wwa)/2, 150, 70)
             if new.collidepoint(mouse_x, mouse_y):
                 new_cu = True
                 new_img = pygame.image.load('menu/new_yc.png')
@@ -496,7 +443,7 @@ def main(speed_plus,stage):
             screen.blit(new_img,new)
 
             # 게임종료
-            exit = pygame.Rect((screen_width-225) / 2, (screen_height-105+wwa)/2, 225, 105)
+            exit = pygame.Rect((configure.screen_width-225) / 2, (configure.screen_height-105+wwa)/2, 225, 105)
             if exit.collidepoint(mouse_x, mouse_y):
                 exit_cu = True
                 exit_img = pygame.image.load('menu/exit_yc.png')
@@ -509,7 +456,7 @@ def main(speed_plus,stage):
 
             if esc_cu :
                 # 뒤로가기
-                back = pygame.Rect((screen_width-225) / 2, (screen_height + 205)/2, 225, 105)
+                back = pygame.Rect((configure.screen_width-225) / 2, (configure.screen_height + 205)/2, 225, 105)
                 if back.collidepoint(mouse_x, mouse_y):
                     back_cu = True
                     back_img = pygame.image.load('menu/back_yc.png')
