@@ -1,7 +1,7 @@
 import pygame, sys
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 
-# 플레이어 좌우이동, 점프, 중력 추가
+# 플레이어 좌우이동, 점프, 중력 추가.
 
 def main():
     # 게임 초기화 정보

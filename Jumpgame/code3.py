@@ -1,7 +1,7 @@
 import pygame, sys, random
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 
-# 2단 점프 구현
+# 2단 점프 구현.
 
 def main():
     # 게임 초기화 정보
