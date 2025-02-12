@@ -1,4 +1,4 @@
-import pygame, random
+import pygame, random, os
 
 def create(screen_width, screen_height, foothold,feeds,feeds1):
 
@@ -20,7 +20,7 @@ def create(screen_width, screen_height, foothold,feeds,feeds1):
         feeds1.append(feed1)
         a = b + 80
         e = e + 1
-    feed_img1 = pygame.image.load('pictures/feed.png')
+    feed_img1 = pygame.image.load(os.path.join('pictures', 'feed.png'))
     feed_img1 = pygame.transform.scale(feed_img1, (70, 80))  # 객체 맞춰서 이미지를 조정하기
     print('1층생성', e)
 
@@ -39,7 +39,7 @@ def create(screen_width, screen_height, foothold,feeds,feeds1):
         a1 = b1 + 80
         e1 = e1 + 1
     print('2층 생성', e1)
-    feed_img = pygame.image.load('pictures/feed.png')
+    feed_img = pygame.image.load(os.path.join('pictures', 'feed.png'))
     feed_img = pygame.transform.scale(feed_img, (70, 80))  # 객체 맞춰서 이미지를 조정하기
 
     return feed_img, feed_img1, feeds, feeds1

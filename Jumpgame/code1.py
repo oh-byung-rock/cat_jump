@@ -1,7 +1,7 @@
 import pygame, sys
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 
-# player 와 배경객체 추가하기
+# 1. player 와 배경객체 추가하기
 
 def main():
     # 게임 초기화 정보
@@ -19,7 +19,7 @@ def main():
 
     # 플레이어 생성
     # 가로 105, 세로 120 객체를 생성, 이후 객체의 왼쪽상단점의 위치를 다음 좌표로 설정
-    player = pygame.Rect( 10, 470, 105,120)
+    player = pygame.Rect( 10, 470, 105, 120 )
     player_img = pygame.image.load('pictures/cat.png') # 이미지 할당
     player_img = pygame.transform.scale(player_img, (105,120)) # 이미지 크기 조정
 
@@ -37,6 +37,7 @@ def main():
 
         screen.blit(bgImage, (0, 0))
         screen.blit(player_img, player)
+
         # 플레이어의 행동에대해 결과를 화면에 업데이트 하기위해 선언
         pygame.display.update()
 main()

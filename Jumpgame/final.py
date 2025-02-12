@@ -109,7 +109,7 @@ def main(speed_plus,stage):
     # 스테이지
     stage = stage
 
-    def create(*speed_plus):
+    def create():
         global feed_img, feed_img1
 
         # 먹이 객체 리스트(1층)
@@ -352,7 +352,7 @@ def main(speed_plus,stage):
             jump_count = 2
             jump_timer = 0
 
-        # 점프 구현 (착지)
+        # 장애물에 점프 구현 (착지)
         # y_vel이 양수인것은 중력작용
         elif player.colliderect(foothold) and y_vel > 0:
             player.bottom = foothold.top
@@ -360,7 +360,7 @@ def main(speed_plus,stage):
             jump_count = 2
             jump_timer = 0
 
-        # 점프 구현 (점프)
+        # 장애물에 점프 구현 (점프)
         elif player.colliderect(foothold) and y_vel < 0: # 점프할때
             player.top = foothold.bottom
             y_vel = 1

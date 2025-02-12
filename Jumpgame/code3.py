@@ -24,18 +24,16 @@ def main():
     # 게임 속도
     clock = pygame.time.Clock()
     speed = 0.5
-    devil_speed = 0.3
 
     # 중력 표현
     y_vel = 0
 
-    # 방향에 따른 이미지 표현
-    va = 0
+    # 속도
+    speed = 0.5
 
     # 2단 점프 구현(추가)
     jump_count = 2  # 기본 2회 점프 가능 (더블 점프)
     is_jumping = False  # 점프 상태 플래그
-    jump_timer = 0
 
     # 게임 실행에대해 처리되는 코드
     while True:
@@ -65,7 +63,6 @@ def main():
             player.bottom = 765
             y_vel = 0
             jump_count = 2
-            jump_timer = 0
 
         # 2단 점프 구현(추가)
         # is_jumping의 초기값은 False 입니다.
@@ -81,7 +78,6 @@ def main():
                 y_vel = -18  # 첫 점프
             elif jump_count == 1:
                 y_vel = -20  # 두 번째 점프
-                jump_timer = 60
 
             jump_count -= 1  # 점프 횟수 감소
             is_jumping = True  # 점프 상태 시작
@@ -89,10 +85,6 @@ def main():
         # 점프 키에서 손을 떼면 is_jumping 초기화(추가)
         if not key[K_SPACE]:
             is_jumping = False
-
-        # 2단 점프 제공시간(추가)
-        if jump_timer > 0:
-            jump_timer -= 1
 
         # 플레이어의 행동에대해 결과를 화면에 업데이트 하기위해 선언
         pygame.display.update()
