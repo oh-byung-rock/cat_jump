@@ -13,7 +13,7 @@ pygame.mixer.init(22050,-16,2,512)
 # 하지만 이를 무시하고싶다면 *speed_plus처럼 하면됩니다.
 # 하지만 단점이 매개변수를 튜플로 인식하여 연산에서 사용할수없게 됩니다.
 def main(speed_plus,stage):
-    # screen 이란 객체를 생성
+    # screen 이란 객체를 생성!
     screen = pygame.display.set_mode((configure.screen_width,configure.screen_height))
     # 제목 생성
     pygame.display.set_caption('cat game')
