@@ -3,6 +3,7 @@ from pygame.locals import * # pygame에 있는 모든기능을 사용
 from create import create
 import configure
 
+# 실행파일 만들기 위한 코드
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     os.chdir(sys._MEIPASS)
 
