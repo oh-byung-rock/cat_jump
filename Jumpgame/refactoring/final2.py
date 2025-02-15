@@ -3,6 +3,9 @@ from pygame.locals import * # pygame에 있는 모든기능을 사용
 from create import create
 import configure
 
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    os.chdir(sys._MEIPASS)
+
 # 사운드 관련 (숫자는 이해하지말고 그냥 쓰기)
 pygame.mixer.pre_init(22050, -16, 2, 512)
 pygame.init()
@@ -31,7 +34,7 @@ def main(speed_plus,stage):
 
     player_img = pygame.transform.scale(player_img, (105,120)) # 이미지 크기 조정
 
-    devil = pygame.Rect(configure.screen_width,configure.screen_height-135-142+5,135,135) # 135(캐릭터높이) 142(바닥높이) 5(여유)
+    devil = pygame.Rect(configure.screen_width,configure.screen_height-135-142,135,135) # 135(캐릭터높이) 142(바닥높이) 5(여유)
     devil_img = pygame.image.load(os.path.join('pictures', 'devil.png'))
 
     foothold = pygame.Rect((configure.screen_width + 105) / 2, (configure.screen_height) / 2, 345, 81)
@@ -220,11 +223,11 @@ def main(speed_plus,stage):
             print("dvleft", devil.left)
             print("plri", player.right)
             # 악당 움직이기 (플레이어의 움직임에 따라)
-            if devil.right * 1.25 < player.left and devil_speed > 0 :
+            if devil.right + 100 < player.left and devil_speed > 0 and player.bottom > foothold.bottom:
                 if devil_speed > 0 and not devil_direction_changed:
                     devil_speed = -devil_speed
                     devil_direction_changed = True  # 방향 전환 후 플래그 활성화
-            elif devil.left * 1.25 > player.right and devil_speed < 0 :
+            elif player.right < devil.left - 100 and devil_speed < 0 and player.bottom > foothold.bottom:
                 if devil_speed < 0 and not devil_direction_changed:
                     devil_speed = -devil_speed
                     devil_direction_changed = True
