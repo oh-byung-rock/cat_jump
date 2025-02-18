@@ -31,9 +31,9 @@ def scaled_id_pw(id_y1,pw_y1):
     pw_height = 28.710889740039597
 
     # Sign in 객체 (기존 값)
-    sing_in_x = 503.7042 + 37.6
-    sing_in_y = pw_y1 + 70
-    sing_in_width = 169.86 * 1.42
+    sing_in_x = 541.3042
+    sing_in_y = pw_y1 * (1.2068030624462584)
+    sing_in_width = 241.20120000000003
     sing_in_height = 52.2
 
     # 현재 화면 크기 (변화하는 값)
@@ -71,6 +71,7 @@ def loginscreen():
     screen = pygame.display.set_mode((configure.screen_width * 0.75 , configure.screen_height * 0.75 ))
     pygame.display.set_caption('wendy game')
 
+    print('메론',scaled_id_pw(1,1)[3])
     bgImage = pygame.image.load(os.path.join('sign', 'sign_in_no.png'))
     bgImage = pygame.transform.scale(bgImage, (configure.screen_width * 0.75, configure.screen_height * 0.75))
 
