@@ -1,4 +1,4 @@
-import pygame, configure, os
+import pygame, configure, os, sys
 
 pygame.init()
 
@@ -104,9 +104,7 @@ def loginscreen():
     active_id = False
     active_pw = False
 
-    running = True
-
-    while running:
+    while True:
         dt = clock.tick(60)
 
         screen.blit(bgImage, (0, 0))
@@ -143,7 +141,8 @@ def loginscreen():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
+                sys.exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if input_id.collidepoint(event.pos):
