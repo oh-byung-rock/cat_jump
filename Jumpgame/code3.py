@@ -65,14 +65,6 @@ def main():
             jump_count = 2
 
         # 2단 점프 구현(추가)
-        # is_jumping의 초기값은 False 입니다.
-        # 스페이스바를 누르지않으면 False가 됩니다.
-        #
-        # key[K_SPACE] and jump_count > 0 and not is_jumping 에서 not is_jumping은 not False이니 True가 됩니다.
-        # 한번 점프가 발생하고 is_jumping이 True가 됩니다. 다음 프레임(hz)에서 key[K_SPACE] and jump_count > 0 and not is_jumping 은 실행되지않습니다.
-        # is_jumping이 not True로 False가 되기 때문입니다. 그리고 스페이스바를 떼면 if not key[k_space]에 의해 is_jumping은 False가 되서 이후 프레임(hz)에서 부터는
-        # key[K_SPACE] and jump_count > 0 and not is_jumping 은 성립되게 됩니다.
-        # 즉, is_jumping으로 프레임(hz)마다 점프가 실행되는 문제를 해결할수있습니다.
         if key[K_SPACE] and jump_count > 0 and not is_jumping :
             if jump_count == 2:
                 y_vel = -18  # 첫 점프
@@ -85,6 +77,9 @@ def main():
         # 점프 키에서 손을 떼면 is_jumping 초기화(추가)
         if not key[K_SPACE]:
             is_jumping = False
+
+        if key[K_e]:
+            y_vel = -18
 
         # 플레이어의 행동에대해 결과를 화면에 업데이트 하기위해 선언
         pygame.display.update()

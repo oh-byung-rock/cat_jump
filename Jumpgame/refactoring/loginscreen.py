@@ -10,6 +10,7 @@ def scaled_id_pw(id_y1,pw_y1):
     if id_y1 == 1 and pw_y1 == 1 :
         id_y1 = 289.9202672558585
         pw_y1 = 338.4862833846612
+
     elif id_y1 == 2 and pw_y1 == 2 :
         id_y1 = 355.9202672558585
         pw_y1 = 404.4862833846612
@@ -75,8 +76,16 @@ def loginscreen():
     bgImage = pygame.image.load(os.path.join('sign', 'sign_in_no.png'))
     bgImage = pygame.transform.scale(bgImage, (configure.screen_width * 0.75, configure.screen_height * 0.75))
 
-    sign_in = pygame.image.load(os.path.join('sign', 'sign_in_nc.png'))
-    sign_in = pygame.transform.scale(sign_in, (scaled_id_pw(1,1)[3]['width'], scaled_id_pw(1,1)[3]['height']))
+    # sign_in 버튼 상태
+    sing_in_cu = False
+
+    # sign_in 창
+    sign_in = pygame.Rect(scaled_id_pw(1,1)[3]['x'],scaled_id_pw(1,1)[3]['y']
+                          ,scaled_id_pw(1,1)[3]['width'],scaled_id_pw(1,1)[3]['height'])
+
+    sign_in_img = pygame.image.load(os.path.join('sign', 'sign_in_nc.png'))
+    sign_in_img = pygame.transform.scale(sign_in_img, (scaled_id_pw(1,1)[3]['width'], scaled_id_pw(1,1)[3]['height']))
+    # sign_in 창 (끝)
 
     clock = pygame.time.Clock()
     WHITE = (255, 255, 255)
@@ -109,7 +118,19 @@ def loginscreen():
         dt = clock.tick(60)
 
         screen.blit(bgImage, (0, 0))
-        screen.blit(sign_in, (scaled_id_pw(1,1)[3]['x'], scaled_id_pw(1,1)[3]['y']))
+        screen.blit(sign_in_img, (scaled_id_pw(1,1)[3]['x'], scaled_id_pw(1,1)[3]['y']))
+
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        print('x', mouse_x)
+        if sign_in.collidepoint(mouse_x, mouse_y):
+            sing_in_cu = True
+            sign_in_img = pygame.image.load(os.path.join('sign', 'sign_in_yc.png'))
+            sign_in_img = pygame.transform.scale(sign_in_img,(scaled_id_pw(1, 1)[3]['width'], scaled_id_pw(1, 1)[3]['height']))
+
+            print("충돌감지")
+        else:
+            sign_in_img = pygame.image.load(os.path.join('sign', 'sign_in_nc.png'))
+            sign_in_img = pygame.transform.scale(sign_in_img,(scaled_id_pw(1, 1)[3]['width'], scaled_id_pw(1, 1)[3]['height']))
 
         # 입력창 그리기
         # 문제발생 : 테두리가 있는 입력창이 발생

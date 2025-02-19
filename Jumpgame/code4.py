@@ -51,7 +51,7 @@ def main():
     # 방향에 따른 이미지 표현 (추가)
     va = 0
 
-    # 2단 점프 소리 구현
+    # 2단 점프 소리 구현 (추가)
     dbjump_sound = pygame.mixer.Sound(os.path.join('pictures', 'one.mp3'))
     dbjump_sound.set_volume(0.5) # 0.0 ~ 1.0
 
