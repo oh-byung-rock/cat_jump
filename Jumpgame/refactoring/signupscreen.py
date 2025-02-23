@@ -11,8 +11,16 @@ def sign_up_screen():
     screen = pygame.display.set_mode((configure.screen_width * 0.75, configure.screen_height * 0.75))
     pygame.display.set_caption('wendy game')
 
-    bgImage = pygame.image.load(os.path.join('pictures', 'signupscreen.png'))
+    bgImage = pygame.image.load(os.path.join('pictures', 'sign_up_screen.png'))
     bgImage = pygame.transform.scale(bgImage, (configure.screen_width * 0.75, configure.screen_height * 0.75))
+
+    # check 버튼
+    check = pygame.Rect(scaled_id_pw(1, 1, 0)[3]['x'], scaled_id_pw(1, 1, 2)[3]['y']
+                          , scaled_id_pw(1, 1, 0)[3]['width'], scaled_id_pw(1, 1, 0)[3]['height'])
+
+    check_img = pygame.image.load(os.path.join('sign', 'check_nc.png'))
+    check_img = pygame.transform.scale(check_img, (scaled_id_pw(1, 1, 0)[3]['width'],
+                                                       scaled_id_pw(1, 1, 0)[3]['height']))
 
     clock = pygame.time.Clock()
     WHITE = (255, 255, 255)
@@ -20,21 +28,18 @@ def sign_up_screen():
     BLUE = (0, 0, 255)
 
     # 위치 및 크기 설정
-    id_x, id_y = scaled_id_pw(2,2)[0]['x'], scaled_id_pw(2,2)[0]['y']
-    print('id', scaled_id_pw(2,2)[0])
-    print('pw', scaled_id_pw(2,2)[1])
-    print('current', configure.screen_width * 0.75, configure.screen_height * 0.75)
-    id_width, id_height = scaled_id_pw(2,2)[0]['width'], scaled_id_pw(2,2)[0]['height']
+    id_x, id_y = scaled_id_pw(2,2,0)[0]['x'], scaled_id_pw(2,2,0)[0]['y']
+    id_width, id_height = scaled_id_pw(2,2,0)[0]['width'], scaled_id_pw(2,2,0)[0]['height']
 
-    pw_x, pw_y = scaled_id_pw(2,2)[1]['x'], scaled_id_pw(2,2)[1]['y']
-    pw_width, pw_height = scaled_id_pw(2,2)[1]['width'], scaled_id_pw(2,2)[1]['height']
+    pw_x, pw_y = scaled_id_pw(2,2,0)[1]['x'], scaled_id_pw(2,2,0)[1]['y']
+    pw_width, pw_height = scaled_id_pw(2,2,0)[1]['width'], scaled_id_pw(2,2,0)[1]['height']
 
     input_id = pygame.Rect(id_x, id_y, id_width, id_height)
     input_pw = pygame.Rect(pw_x, pw_y, pw_width, pw_height)
 
     send_button_rect = pygame.Rect(pw_x, pw_y * 1.17, 100, 40)
 
-    font = pygame.font.Font(None, scaled_id_pw(2,2)[2])
+    font = pygame.font.Font(None, scaled_id_pw(2,2,0)[2])
     user_text_id = ""
     user_text_pw = ""
 
@@ -60,6 +65,18 @@ def sign_up_screen():
         # 투명 Surface 배치 (입력창을 투명하게)
         screen.blit(transparent_surface, (input_id.x, input_id.y))
         screen.blit(transparent_surface, (input_pw.x, input_pw.y))  # 비밀번호 입력창도 동일
+
+        # 버튼에 마우스 닿으면 이미지 변경
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+
+        if check.collidepoint(mouse_x, mouse_y):
+            check_img = pygame.image.load(os.path.join('sign', 'check_yc.png'))
+            check_img = pygame.transform.scale(check_img,(scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height']))
+        else:
+            check_img = pygame.image.load(os.path.join('sign', 'check_nc.png'))
+            check_img = pygame.transform.scale(check_img,(scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height']))
+
+        screen.blit(check_img, (scaled_id_pw(1, 1, 0)[3]['x'], scaled_id_pw(1, 1, 2)[3]['y'])) # ★
 
         # 전송 버튼 그리기
         pygame.draw.rect(screen, BLUE, send_button_rect)
@@ -93,8 +110,8 @@ def sign_up_screen():
                     active_pw = False
 
                 if send_button_rect.collidepoint(event.pos):  # 전송 버튼 클릭
-                    print("입력된 아이디:", user_text_id)
-                    print("입력된 비밀번호:", user_text_pw)
+                    from login import insert_mongo
+                    insert_mongo(user_text_id, user_text_pw)
                     user_text_id = ""
                     user_text_pw = ""
 

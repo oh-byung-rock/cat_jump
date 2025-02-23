@@ -6,7 +6,19 @@ pygame.init()
 # 해당 working directory 경로를 C:/Users/병록/cat_jump/Jumpgame/refactoring 에서 C:/Users/병록/cat_jump/Jumpgame 으로 수정
 # 참고로 제가 현재 실행하고있는 파일의 위치는 C:/Users/병록/cat_jump/Jumpgame/refactoring/loginscreen.py 입니다.
 
-def scaled_id_pw(id_y1,pw_y1):
+def scaled_id_pw(id_y1,pw_y1,interval_num):
+    # (1,1) : loginscreen
+    # (2,2) : signupscreen
+
+    if interval_num == 0:
+        interval = 1
+    elif interval_num == 1:
+        interval = 1.2068030624462584
+    elif interval_num == 2:
+        interval = 1.4136061248925168
+    else:
+        interval = 1.6204091873387752
+
     if id_y1 == 1 and pw_y1 == 1 :
         id_y1 = 289.9202672558585
         pw_y1 = 338.4862833846612
@@ -14,6 +26,7 @@ def scaled_id_pw(id_y1,pw_y1):
     elif id_y1 == 2 and pw_y1 == 2 :
         id_y1 = 355.9202672558585
         pw_y1 = 404.4862833846612
+
 
     # 기준이 되는 원래 Pygame 창 크기
     base_width = 1368
@@ -33,7 +46,7 @@ def scaled_id_pw(id_y1,pw_y1):
 
     # Sign in 객체 (기존 값)
     sing_in_x = 541.3042
-    sing_in_y = pw_y1 * (1.2068030624462584)
+    sing_in_y = pw_y1 * (interval)
     sing_in_width = 241.20120000000003
     sing_in_height = 52.2
 
@@ -72,20 +85,32 @@ def loginscreen():
     screen = pygame.display.set_mode((configure.screen_width * 0.75 , configure.screen_height * 0.75 ))
     pygame.display.set_caption('wendy game')
 
-    print('메론',scaled_id_pw(1,1)[3])
-    bgImage = pygame.image.load(os.path.join('sign', 'sign_in_no.png'))
+    print('메론',scaled_id_pw(1,1,0)[3])
+    bgImage = pygame.image.load(os.path.join('sign', 'login_screen.png'))
     bgImage = pygame.transform.scale(bgImage, (configure.screen_width * 0.75, configure.screen_height * 0.75))
 
-    # sign_in 버튼 상태
-    sing_in_cu = False
-
     # sign_in 창
-    sign_in = pygame.Rect(scaled_id_pw(1,1)[3]['x'],scaled_id_pw(1,1)[3]['y']
-                          ,scaled_id_pw(1,1)[3]['width'],scaled_id_pw(1,1)[3]['height'])
+    sign_in = pygame.Rect(scaled_id_pw(1,1,0)[3]['x'],scaled_id_pw(1,1,1)[3]['y']
+                          ,scaled_id_pw(1,1,0)[3]['width'],scaled_id_pw(1,1,0)[3]['height'])
 
     sign_in_img = pygame.image.load(os.path.join('sign', 'sign_in_nc.png'))
-    sign_in_img = pygame.transform.scale(sign_in_img, (scaled_id_pw(1,1)[3]['width'], scaled_id_pw(1,1)[3]['height']))
-    # sign_in 창 (끝)
+    sign_in_img = pygame.transform.scale(sign_in_img, (scaled_id_pw(1,1,0)[3]['width'],
+                                                       scaled_id_pw(1,1,0)[3]['height']))
+
+    # sign_up 창
+    sign_up = pygame.Rect(scaled_id_pw(1, 1,0)[3]['x'], scaled_id_pw(1, 1,2)[3]['y']
+                          , scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height'])
+
+    sign_up_img = pygame.image.load(os.path.join('sign', 'sign_up_nc.png'))
+    sign_up_img = pygame.transform.scale(sign_up_img, (scaled_id_pw(1, 1,0)[3]['width'],
+                                                       scaled_id_pw(1, 1,0)[3]['height']))
+
+    # guest_mode 창
+    guest_mode = pygame.Rect(scaled_id_pw(1, 1,0)[3]['x'], scaled_id_pw(1, 1,3)[3]['y']
+                          , scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height'])
+
+    guest_mode_img = pygame.image.load(os.path.join('sign', 'guest_mode_nc.png'))
+    guest_mode_img = pygame.transform.scale(guest_mode_img, (scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height']))
 
     clock = pygame.time.Clock()
     WHITE = (255, 255, 255)
@@ -93,21 +118,21 @@ def loginscreen():
     BLUE = (0, 0, 255)
 
     # 위치 및 크기 설정
-    id_x, id_y = scaled_id_pw(1,1)[0]['x'], scaled_id_pw(1,1)[0]['y']
-    print('id',scaled_id_pw(1,1)[0])
-    print('pw',scaled_id_pw(1,1)[1])
+    id_x, id_y = scaled_id_pw(1,1,0)[0]['x'], scaled_id_pw(1,1,0)[0]['y']
+    print('id',scaled_id_pw(1,1,1)[3]['y'])
+    print('pw',scaled_id_pw(1,1,0)[1])
     print('current',configure.screen_width * 0.75,configure.screen_height * 0.75)
-    id_width, id_height = scaled_id_pw(1,1)[0]['width'], scaled_id_pw(1,1)[0]['height']
+    id_width, id_height = scaled_id_pw(1,1,0)[0]['width'], scaled_id_pw(1,1,0)[0]['height']
 
-    pw_x, pw_y = scaled_id_pw(1,1)[1]['x'], scaled_id_pw(1,1)[1]['y']
-    pw_width, pw_height = scaled_id_pw(1,1)[1]['width'], scaled_id_pw(1,1)[1]['height']
+    pw_x, pw_y = scaled_id_pw(1,1,0)[1]['x'], scaled_id_pw(1,1,0)[1]['y']
+    pw_width, pw_height = scaled_id_pw(1,1,0)[1]['width'], scaled_id_pw(1,1,0)[1]['height']
 
     input_id = pygame.Rect(id_x, id_y, id_width, id_height)
     input_pw = pygame.Rect(pw_x, pw_y, pw_width, pw_height)
 
     send_button_rect = pygame.Rect(200, 180, 100, 40)
 
-    font = pygame.font.Font(None, scaled_id_pw(1,1)[2])
+    font = pygame.font.Font(None, scaled_id_pw(1,1,0)[2])
     user_text_id = ""
     user_text_pw = ""
 
@@ -118,19 +143,38 @@ def loginscreen():
         dt = clock.tick(60)
 
         screen.blit(bgImage, (0, 0))
-        screen.blit(sign_in_img, (scaled_id_pw(1,1)[3]['x'], scaled_id_pw(1,1)[3]['y']))
+        screen.blit(sign_in_img, (scaled_id_pw(1,1,0)[3]['x'], scaled_id_pw(1,1,1)[3]['y']))
+        screen.blit(sign_up_img, (scaled_id_pw(1, 1, 0)[3]['x'], scaled_id_pw(1, 1, 2)[3]['y']))
+        screen.blit(guest_mode_img, (scaled_id_pw(1, 1, 0)[3]['x'], scaled_id_pw(1, 1, 3)[3]['y']))
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
-        print('x', mouse_x)
-        if sign_in.collidepoint(mouse_x, mouse_y):
-            sing_in_cu = True
-            sign_in_img = pygame.image.load(os.path.join('sign', 'sign_in_yc.png'))
-            sign_in_img = pygame.transform.scale(sign_in_img,(scaled_id_pw(1, 1)[3]['width'], scaled_id_pw(1, 1)[3]['height']))
 
-            print("충돌감지")
+        if sign_in.collidepoint(mouse_x, mouse_y):
+            sign_in_img = pygame.image.load(os.path.join('sign', 'sign_in_yc.png'))
+            sign_in_img = pygame.transform.scale(sign_in_img,(scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height']))
         else:
             sign_in_img = pygame.image.load(os.path.join('sign', 'sign_in_nc.png'))
-            sign_in_img = pygame.transform.scale(sign_in_img,(scaled_id_pw(1, 1)[3]['width'], scaled_id_pw(1, 1)[3]['height']))
+            sign_in_img = pygame.transform.scale(sign_in_img,(scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height']))
+
+        if sign_up.collidepoint(mouse_x, mouse_y):
+            sign_up_img = pygame.image.load(os.path.join('sign', 'sign_up_yc.png'))
+            sign_up_img = pygame.transform.scale(sign_up_img,(scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height']))
+        else:
+            sign_up_img = pygame.image.load(os.path.join('sign', 'sign_up_nc.png'))
+            sign_up_img = pygame.transform.scale(sign_up_img,(scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height']))
+
+        if guest_mode.collidepoint(mouse_x, mouse_y):
+            guest_mode_img = pygame.image.load(os.path.join('sign', 'guest_mode_yc.png'))
+            guest_mode_img = pygame.transform.scale(guest_mode_img,(scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height']))
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pygame.quit()
+                    import final2 as final2
+                    final2.main(0,1)
+                    sys.exit()
+        else:
+            guest_mode_img = pygame.image.load(os.path.join('sign', 'guest_mode_nc.png'))
+            guest_mode_img = pygame.transform.scale(guest_mode_img,(scaled_id_pw(1, 1,0)[3]['width'], scaled_id_pw(1, 1,0)[3]['height']))
 
         # 입력창 그리기
         # 문제발생 : 테두리가 있는 입력창이 발생
