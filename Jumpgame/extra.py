@@ -61,7 +61,6 @@ def main():
     star_left_speed = 2
     start = 200
     end = 300
-    tt = 0
 
     # 처음 10개의 별을 생성하여 리스트에 추가 (추가)
     for _ in range(7):
@@ -69,7 +68,7 @@ def main():
         start += start_position//2
         end += start_position//2
         print(type(start_position))
-        stars.append({"rect": pygame.Rect(start_position, 0, 60, 60)})
+        stars.append({"rect": pygame.Rect(start_position, 0, 60, 60),"tt":0})
 
     # 게임 실행에대해 처리되는 코드
     while True:
@@ -154,18 +153,17 @@ def main():
 
             # 별이 땅에 닿으면 새로운 별을 생성
             if star["rect"].top >= screen_height * 0.8:
-                tt = 120
+                star["tt"] = 120  # 별에 대해 tt 값 초기화 (2초 동안 유지)
                 start_position = random.randint(start2, end2)
-                start2 += start_position//2
-                end2 += start_position//2
-                new_stars.append({"rect": pygame.Rect(start_position, 0, 60, 60)})
+                start2 += start_position // 2
+                end2 += start_position // 2
+                new_stars.append({"rect": pygame.Rect(start_position, 0, 60, 60), "tt": 120})
             else:
                 new_stars.append(star)
 
-            if tt > 0:
-                tt -= 1
-
-            if tt > 0 :
+            # tt가 0보다 크면 collide_star 이미지로 유지
+            if star["tt"] > 0:
+                star["tt"] -= 1  # tt 값 감소
                 star_img = pygame.image.load('pictures/collide_star.png')
             else:
                 star_img = pygame.image.load('pictures/star.png')
