@@ -1,7 +1,7 @@
 import pygame, sys, random, os
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 
-# 발판, 음식 나타내기
+# 2단점프, 좌우 움직일때 이미지 구분하기
 
 def main():
     # 게임 초기화 정보
@@ -11,32 +11,27 @@ def main():
     # screen 이란 객체를 생성
     screen = pygame.display.set_mode((screen_width,screen_height))
     # 제목 생성
-    pygame.display.set_caption('cat game')
+    pygame.display.set_caption('avoid star')
     bgImage = pygame.image.load('pictures/background.jpg')
     bgImage = pygame.transform.scale(bgImage, (screen_width, screen_height))
 
     # 플레이어 생성
     # 가로 105, 세로 120 객체를 생성, 이후 객체의 왼쪽상단점의 위치를 다음 좌표로 설정
     player = pygame.Rect( 10, 470, 105,120)
-    player_img = pygame.image.load('pictures/cat.png') # 이미지 할당
+    player_img = pygame.image.load('pictures/new_devil_left.png') # 이미지 할당
     player_img = pygame.transform.scale(player_img, (105,120)) # 이미지 크기 조정
 
     # 플레이어 왼쪽 모습 생성
-    player_img_left = pygame.image.load(os.path.join('pictures', 'cat_left.png'))
+    player_img_left = pygame.image.load(os.path.join('pictures', 'new_devil_left.png'))
     player_img_left = pygame.transform.scale(player_img_left, (105, 120))
 
     # 플레이어 오른쪽 모습 생성
-    player_img_right = pygame.image.load(os.path.join('pictures', 'cat_right.png'))
+    player_img_right = pygame.image.load(os.path.join('pictures', 'new_devil_right.png'))
     player_img_right = pygame.transform.scale(player_img_right, (105, 120))
 
     # 플레이어 2단 점프 모습 생성
-    player_img_jump = pygame.image.load(os.path.join('pictures', 'cat_jump.png'))
+    player_img_jump = pygame.image.load(os.path.join('pictures', 'new_devil_jump.png'))
     player_img_jump = pygame.transform.scale(player_img_jump, (105, 120))
-
-    # 발판 생성(추가)
-    foothold = pygame.Rect((screen_width + 105) / 2, (screen_height) / 2, 345, 81)
-    foothold_img = pygame.image.load(os.path.join('pictures', 'foothold.png'))
-    foothold_img = pygame.transform.scale(foothold_img, (345, 81))  # 가로, 세로
 
     # 게임 속도
     clock = pygame.time.Clock()
@@ -60,6 +55,22 @@ def main():
     dbjump_sound = pygame.mixer.Sound(os.path.join('pictures', 'one.mp3'))
     dbjump_sound.set_volume(0.5) # 0.0 ~ 1.0
 
+    # 별 떨어지기 (추가)
+    stars = []
+    star_speed = 5
+    star_left_speed = 2
+    start = 200
+    end = 300
+    tt = 0
+
+    # 처음 10개의 별을 생성하여 리스트에 추가 (추가)
+    for _ in range(7):
+        start_position = random.randint(start, end)
+        start += start_position//2
+        end += start_position//2
+        print(type(start_position))
+        stars.append({"rect": pygame.Rect(start_position, 0, 60, 60)})
+
     # 게임 실행에대해 처리되는 코드
     while True:
         dt = clock.tick(60) # 1초에 60번(hz) 업데이트
@@ -70,8 +81,6 @@ def main():
                 sys.exit()
 
         screen.blit(bgImage, (0,0))
-        # 발판 이미지 (추가)
-        screen.blit(foothold_img, foothold)
 
         # 키보드로 플레이어 조종
         key = pygame.key.get_pressed()
@@ -93,18 +102,6 @@ def main():
             player.bottom = 765
             y_vel = 0
             jump_count = 2
-
-        # 발판 바닥 위로 못뛰게
-        elif player.colliderect(foothold) and y_vel > 0:
-            player.bottom = foothold.top
-            y_vel = 0
-            jump_count = 2
-            jump_timer = 0
-
-        # 발판 위로 착지
-        elif player.colliderect(foothold) and y_vel < 0: # 점프할때
-            player.top = foothold.bottom
-            y_vel = 1
 
         # 2단 점프 구현
         # is_jumping의 초기값은 False 입니다.
@@ -146,6 +143,39 @@ def main():
         else :
             screen.blit(player_img, player)
 
-        # 플레이어의 행동에대해 결과를 화면에 업데이트 하기위해 선언
+        # 별 아래로 내리기 (추가)
+        new_stars = []
+        start2 = 200
+        end2 = 300
+
+        for star in stars:
+            star["rect"].top += star_speed  # 별이 아래로 이동
+            star["rect"].left -= star_left_speed  # 별이 왼쪽으로 이동
+
+            # 별이 땅에 닿으면 새로운 별을 생성
+            if star["rect"].top >= screen_height * 0.8:
+                tt = 120
+                start_position = random.randint(start2, end2)
+                start2 += start_position//2
+                end2 += start_position//2
+                new_stars.append({"rect": pygame.Rect(start_position, 0, 60, 60)})
+            else:
+                new_stars.append(star)
+
+            if tt > 0:
+                tt -= 1
+
+            if tt > 0 :
+                star_img = pygame.image.load('pictures/collide_star.png')
+            else:
+                star_img = pygame.image.load('pictures/star.png')
+
+            screen.blit(star_img, star["rect"])
+
+        stars = new_stars  # 별 리스트 갱신
+
+        # 플레이어의 행동에 대해 결과를 화면에 업데이트하기 위해 선언
         pygame.display.update()
+
+
 main()

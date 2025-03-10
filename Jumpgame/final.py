@@ -319,6 +319,7 @@ def main(speed_plus,stage):
                 else:
                     star["rect"].left -= star_speed
 
+
                 # 충돌 감지
                 if star["rect"].colliderect(devil):
                     # if star["direction"] == "right" and devil_speed > 0:
@@ -327,6 +328,7 @@ def main(speed_plus,stage):
                     #     devil_speed *= -1
                     hp_bs += 1
                     continue  # 충돌한 별은 리스트에 추가하지 않음 (즉시 삭제됨)
+                # 이거 지우면 별이 1프레임만 보이고 사라짐
                 if star["direction"] == "right" and star["rect"].right < 1750:  # 화면을 벗어나지 않으면 계속 이동
                     new_stars.append(star)
                 if star["direction"] == "left" and star["rect"].left > 50:  # 화면을 벗어나지 않으면 계속 이동
@@ -334,7 +336,7 @@ def main(speed_plus,stage):
 
                 screen.blit(star_img, star["rect"])  # 별 이미지 그리기
 
-
+            # 이거 지우면 별 1개만 맞아도 피가 한번에 담
             stars = new_stars  # 리스트 갱신
 
         # if key[K_RIGHT] and player.right <= screen_width:
