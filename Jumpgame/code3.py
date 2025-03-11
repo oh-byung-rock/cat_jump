@@ -1,12 +1,14 @@
-import pygame, sys, random
+import pygame, sys
 from pygame.locals import * # pygame에 있는 모든기능을 사용
+import screen_value
 
-# 2단 점프 구현.
+# 2단 점프 구현, player 화면에 비율맞추기
 
 def main():
     # 게임 초기화 정보
     pygame.init()
     screen_width = 1800
+    print('너비',screen_value.screen_width)
     screen_height = 900
     # screen 이란 객체를 생성
     screen = pygame.display.set_mode((screen_width,screen_height))

@@ -12,7 +12,7 @@ def main():
     screen = pygame.display.set_mode((screen_width,screen_height))
     # 제목 생성
     pygame.display.set_caption('avoid star')
-    bgImage = pygame.image.load('pictures/background.jpg')
+    bgImage = pygame.image.load('pictures/background_eve.jpg')
     bgImage = pygame.transform.scale(bgImage, (screen_width, screen_height))
 
     # 플레이어 생성
@@ -55,6 +55,11 @@ def main():
     dbjump_sound = pygame.mixer.Sound(os.path.join('pictures', 'one.mp3'))
     dbjump_sound.set_volume(0.5) # 0.0 ~ 1.0
 
+    # collide 시 검은화면 (추가)
+    overlay = pygame.Surface((1800, 900), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0))
+    state = True
+
     # 별 떨어지기 (추가)
     stars = []
     star_speed = 5
@@ -68,7 +73,7 @@ def main():
         start += start_position//2
         end += start_position//2
         print(type(start_position))
-        stars.append({"rect": pygame.Rect(start_position, 0, 60, 60),"tt":0})
+        stars.append({"rect": pygame.Rect(start_position, 0, 87, 81),"tt":30})
 
     # 게임 실행에대해 처리되는 코드
     while True:
@@ -78,8 +83,6 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-
-        screen.blit(bgImage, (0,0))
 
         # 키보드로 플레이어 조종
         key = pygame.key.get_pressed()
@@ -132,45 +135,57 @@ def main():
             va = 3
             jump_timer -= 1
 
-        # va 별 이미지 구현
-        if va == 1 :
-            screen.blit(player_img_left, player)  # 이미지를 플레이어 객체에 그리기, 어려운말로 랜더링(묘사하다라는 사전적 의미)
-        elif va == 2 :
-            screen.blit(player_img_right, player)
-        elif va == 3 :
-            screen.blit(player_img_jump, player)
-        else :
-            screen.blit(player_img, player)
+        if state:
+            screen.blit(bgImage, (0, 0))
 
-        # 별 아래로 내리기 (추가)
-        new_stars = []
-        start2 = 200
-        end2 = 300
-
-        for star in stars:
-            star["rect"].top += star_speed  # 별이 아래로 이동
-            star["rect"].left -= star_left_speed  # 별이 왼쪽으로 이동
-
-            # 별이 땅에 닿으면 새로운 별을 생성
-            if star["rect"].top >= screen_height * 0.8:
-                star["tt"] = 120  # 별에 대해 tt 값 초기화 (2초 동안 유지)
-                start_position = random.randint(start2, end2)
-                start2 += start_position // 2
-                end2 += start_position // 2
-                new_stars.append({"rect": pygame.Rect(start_position, 0, 60, 60), "tt": 120})
+            # 플레이어 이미지 랜더링
+            if va == 1:
+                screen.blit(player_img_left, player)
+            elif va == 2:
+                screen.blit(player_img_right, player)
+            elif va == 3:
+                screen.blit(player_img_jump, player)
             else:
-                new_stars.append(star)
+                screen.blit(player_img, player)
 
-            # tt가 0보다 크면 collide_star 이미지로 유지
-            if star["tt"] > 0:
-                star["tt"] -= 1  # tt 값 감소
-                star_img = pygame.image.load('pictures/collide_star.png')
-            else:
-                star_img = pygame.image.load('pictures/star.png')
+            # 별 아래로 내리기
+            new_stars = []
+            start2 = 200
+            end2 = 300
 
-            screen.blit(star_img, star["rect"])
+            for star in stars:
+                star["rect"].top += star_speed  # 별이 아래로 이동
+                star["rect"].left -= star_left_speed  # 별이 왼쪽으로 이동
 
-        stars = new_stars  # 별 리스트 갱신
+                if star["rect"].colliderect(player):
+                    state = False
+
+                if star["rect"].top >= screen_height * 0.8:
+                    start_position = random.randint(start2, end2)
+                    start2 += start_position // 2
+                    end2 += start_position // 2
+                    new_stars.append({"rect": pygame.Rect(start_position, 0, 87, 81), "tt": 30})
+                else:
+                    new_stars.append(star)
+
+                if star["tt"] > 0:
+                    star["tt"] -= 1
+                    star_img = pygame.image.load('pictures/meteo_star.png')
+                else:
+                    star_img = pygame.image.load('pictures/meteo.png')
+
+                screen.blit(star_img, star["rect"])
+
+            stars = new_stars  # 별 리스트 갱신
+
+        else:
+            # 게임 오버 화면만 표시 (캐릭터와 별은 렌더링하지 않음)
+            screen.blit(overlay, (0, 0))
+            lose = pygame.Rect((screen_width - 400) / 2, (screen_height - 580) / 2, 350, 160)
+            lose_img = pygame.image.load('menu/gameover.png')
+            lose_img = pygame.transform.scale(lose_img, (400, 200))
+            screen.blit(lose_img, lose)
+            y_vel = 0
 
         # 플레이어의 행동에 대해 결과를 화면에 업데이트하기 위해 선언
         pygame.display.update()
