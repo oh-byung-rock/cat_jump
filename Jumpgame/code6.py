@@ -1,6 +1,6 @@
 import pygame, sys, random, os
 from pygame.locals import * # pygame에 있는 모든기능을 사용
-import screen_value # (추가)
+import screen_value
 
 # 발판, 사용자 화면에 크기 맞추기(screen_value.py 생성)
 
@@ -12,12 +12,11 @@ def main():
     # screen_width = 1800
     # screen_height = 900
 
-    # screen 이란 객체를 생성 (수정)
+    # screen 이란 객체를 생성
     screen = pygame.display.set_mode((screen_value.screen_width,screen_value.screen_height))
     # 제목 생성
     pygame.display.set_caption('cat game')
     bgImage = pygame.image.load('pictures/background.jpg')
-    # (수정)
     bgImage = pygame.transform.scale(bgImage, (screen_value.screen_width,screen_value.screen_height))
 
     # 플레이어 생성
@@ -38,7 +37,7 @@ def main():
     player_img_jump = pygame.image.load(os.path.join('pictures', 'cat_jump.png'))
     player_img_jump = pygame.transform.scale(player_img_jump, (105, 120))
 
-    # 발판 생성(추가)(추가2)
+    # 발판 생성
     foothold = pygame.Rect((screen_value.screen_width + 105) / 2, (screen_value.screen_height) / 2, 345, 81)
     foothold_img = pygame.image.load(os.path.join('pictures', 'foothold.png'))
     foothold_img = pygame.transform.scale(foothold_img, (345, 81))  # 가로, 세로
@@ -65,6 +64,55 @@ def main():
     dbjump_sound = pygame.mixer.Sound(os.path.join('pictures', 'one.mp3'))
     dbjump_sound.set_volume(0.5) # 0.0 ~ 1.0
 
+    # 먹이 1층 2층 구분(추가)
+    feeds1 = [] # 1층
+    feeds = [] # 2층
+
+    # 먹이 생성함수 (추가)
+    def create():
+        global feed_img, feed_img1
+
+        # 먹이 객체 리스트(1층)
+        a = int(round(screen_value.screen_width * 0.11,0)) # float은 range 범위가 안되니 int로
+        d = 7 # 7개 생성
+        e = 0
+        for i in range(d):
+            if a > screen_value.screen_width * 0.93 :
+                break
+
+            c = random.randint(4,8)
+            if a+(75*c) > screen_value.screen_width * 0.93:
+                break
+
+            b= random.randint(a, a+(75*c)) # 먹이 가로 70인데 여유있게 75
+            feed1 = pygame.Rect(b, (screen_value.screen_height * 0.75), 70,80)
+            feeds1.append(feed1)
+            a = b + 80
+            e = e + 1
+        feed_img1 = pygame.image.load('pictures/feed.png')
+        feed_img1 = pygame.transform.scale(feed_img1,(70,80)) # 객체 맞춰서 이미지를 조정하기
+        print('1층생성', e)
+
+        # 먹이 객체 리스트(2층)
+        a1 = foothold.left
+        e1 = 0
+        for i in range(d-e):
+            if a1 > foothold.right - 75 :
+                break
+            c1 = random.randint(1,3)
+            if a1+(75*c1) > foothold.right - 75 :
+                break
+            b1 = random.randint(a1, a1 + (75 * c1))
+            feed = pygame.Rect(b1, (screen_value.screen_height * 0.4), 70,80) # 294
+            feeds.append(feed)
+            a1 = b1 + 80
+            e1 = e1 + 1
+        print('2층 생성',e1)
+        feed_img = pygame.image.load('pictures/feed.png')
+        feed_img = pygame.transform.scale(feed_img,(70,80)) # 객체 맞춰서 이미지를 조정하기
+
+    create()
+
     # 게임 실행에대해 처리되는 코드
     while True:
         dt = clock.tick(60) # 1초에 60번(hz) 업데이트
@@ -75,7 +123,7 @@ def main():
                 sys.exit()
 
         screen.blit(bgImage, (0,0))
-        # 발판 이미지 (추가)
+        # 발판 이미지
         screen.blit(foothold_img, foothold)
 
         # 키보드로 플레이어 조종
@@ -95,7 +143,7 @@ def main():
         player.top = player.top + y_vel
         y_vel += 1
 
-        # 밑바닥은 전체높이의 15% 임으로 조정된 높이에 맞게끔 조정 (수정)
+        # 밑바닥은 전체높이의 15% 임으로 조정된 높이에 맞게끔 조정
         if player.bottom >= (screen_value.screen_height * 0.85):
             player.bottom = (screen_value.screen_height * 0.85)
             y_vel = 0
@@ -152,6 +200,15 @@ def main():
             screen.blit(player_img_jump, player)
         else :
             screen.blit(player_img, player)
+
+        # 먹이 추가 및 제거(추가)
+        # 2층
+        for f in feeds:
+            screen.blit(feed_img, f)
+
+        # 1층
+        for f in feeds1:
+            screen.blit(feed_img1, f)
 
         # 플레이어의 행동에대해 결과를 화면에 업데이트 하기위해 선언
         pygame.display.update()
