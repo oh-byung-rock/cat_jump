@@ -1,3 +1,4 @@
+# 설치하기 _ pip install pymongo python-dotenv
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os

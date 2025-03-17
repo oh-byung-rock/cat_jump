@@ -1,7 +1,7 @@
 import pygame, sys, random, os
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 
-# 2단점프, 좌우 움직일때 이미지 구분하기
+# 2단점프, 좌우 움직일때 이미지 구분하기2
 
 def main():
     # 게임 초기화 정보
@@ -51,7 +51,7 @@ def main():
     # 방향에 따른 이미지 표현
     va = 0
 
-    # 2단 점프 소리 구현
+    # 2단 점프 소리 구현0.
     dbjump_sound = pygame.mixer.Sound(os.path.join('pictures', 'one.mp3'))
     dbjump_sound.set_volume(0.5) # 0.0 ~ 1.0
 
