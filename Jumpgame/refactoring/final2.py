@@ -111,6 +111,7 @@ def main(speed_plus,stage):
     wendywin = False
 
     feed_img, feed_img1, feeds, feeds1 = create(configure.screen_width, configure.screen_height, foothold,feeds,feeds1)
+
     # 게임 실행에대해 처리되는 코드
     while True:
         dt = clock.tick(60) # 1초에 60번(hz) 업데이트
