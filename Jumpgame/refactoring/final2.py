@@ -143,7 +143,8 @@ def main(speed_plus,stage):
                 sys.exit()
 
             if event.type == MOUSEBUTTONDOWN and next_cu:
-                main(0.05,2)
+                if stage == 1:
+                    main(0.05,2)
 
             if event.type == MOUSEBUTTONDOWN and do_over_cu:
                 configure.hp_bs = 0

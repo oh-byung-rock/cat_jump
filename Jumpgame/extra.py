@@ -51,7 +51,7 @@ def main():
     # 방향에 따른 이미지 표현
     va = 0
 
-    # 2단 점프 소리 구현0.
+    # 2단 점프 소리 구현
     dbjump_sound = pygame.mixer.Sound(os.path.join('pictures', 'one.mp3'))
     dbjump_sound.set_volume(0.5) # 0.0 ~ 1.0
 
@@ -61,19 +61,21 @@ def main():
     state = True
 
     # 별 떨어지기 (추가)
-    stars = []
-    star_speed = 5
-    star_left_speed = 2
-    start = 200
-    end = 300
+    def play_star():
+        stars = []
+        start = random.randint(200, int(screen_width * 0.3))
+        for _ in range(4):
+            if start > screen_width * 0.9:
+                continue
+            c = random.randint(3, 6)
+            end = min(start + (100 * c), int(screen_width * 0.9))
+            b = random.randint(start, end)
+            start = b + 100
+            stars.append({"rect": pygame.Rect(b, 0, 87, 81), "tt": 30})
+        return stars
 
-    # 처음 10개의 별을 생성하여 리스트에 추가 (추가)
-    for _ in range(7):
-        start_position = random.randint(start, end)
-        start += start_position//2
-        end += start_position//2
-        print(type(start_position))
-        stars.append({"rect": pygame.Rect(start_position, 0, 87, 81),"tt":30})
+    stars = play_star()
+    star_speed, star_left_speed = 5, 2
 
     # 게임 실행에대해 처리되는 코드
     while True:
@@ -148,10 +150,8 @@ def main():
             else:
                 screen.blit(player_img, player)
 
-            # 별 아래로 내리기
+            # 별 아래로 내리기(추가)
             new_stars = []
-            start2 = 200
-            end2 = 300
 
             for star in stars:
                 star["rect"].top += star_speed  # 별이 아래로 이동
@@ -160,11 +160,10 @@ def main():
                 if star["rect"].colliderect(player):
                     state = False
 
-                if star["rect"].top >= screen_height * 0.8:
-                    start_position = random.randint(start2, end2)
-                    start2 += start_position // 2
-                    end2 += start_position // 2
-                    new_stars.append({"rect": pygame.Rect(start_position, 0, 87, 81), "tt": 30})
+                if star["rect"].colliderect(player):
+                    state = False
+                elif star["rect"].top >= screen_height * 0.8:
+                    new_stars = []
                 else:
                     new_stars.append(star)
 
@@ -176,7 +175,7 @@ def main():
 
                 screen.blit(star_img, star["rect"])
 
-            stars = new_stars  # 별 리스트 갱신
+            stars = new_stars if new_stars else play_star()
 
         else:
             # 게임 오버 화면만 표시 (캐릭터와 별은 렌더링하지 않음)
