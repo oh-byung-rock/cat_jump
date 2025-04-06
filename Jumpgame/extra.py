@@ -137,7 +137,7 @@ def main():
             va = 3
             jump_timer -= 1
 
-        if state:
+        if state: # state은 검은화면 처리상태
             screen.blit(bgImage, (0, 0))
 
             # 플레이어 이미지 랜더링
@@ -154,11 +154,9 @@ def main():
             new_stars = []
 
             for star in stars:
+                print("start",star)
                 star["rect"].top += star_speed  # 별이 아래로 이동
                 star["rect"].left -= star_left_speed  # 별이 왼쪽으로 이동
-
-                if star["rect"].colliderect(player):
-                    state = False
 
                 if star["rect"].colliderect(player):
                     state = False
