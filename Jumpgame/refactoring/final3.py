@@ -26,21 +26,24 @@ def main(speed_plus,stage):
     screen = pygame.display.set_mode((configure.screen_width,configure.screen_height))
     # 제목 생성
     pygame.display.set_caption('cat game')
+    # 배경이미지(추가)
     bgImage = pygame.image.load(os.path.join('pictures', 'background.jpg'))
     bgImage = pygame.transform.scale(bgImage, (configure.screen_width, configure.screen_height))
     bgImage2 = pygame.image.load(os.path.join('pictures', 'background_eve.jpg'))
     bgImage2 = pygame.transform.scale(bgImage2, (configure.screen_width, configure.screen_height))
 
-    # 플레이어 생성
+    # 플레이어 생성(추가)
     # 가로 105, 세로 120 객체를 생성, 이후 객체의 왼쪽상단점의 위치를 다음 좌표로 설정
     player = pygame.Rect( 10, 470, 105,120) # 중력이 있어서 안바꿔도됨
     player_img = pygame.image.load(os.path.join('pictures', 'cat.png')) # 이미지 할당
+    player_img = pygame.transform.scale(player_img, (105,120)) # 이미지 크기 조정
+
+    player_img2 = pygame.image.load(os.path.join('pictures', 'new_wen_front.png')) # 이미지 할당
+    player_img2 = pygame.transform.scale(player_img2, (105,120)) # 이미지 크기 조정
     # 경로가 바뀌어서 폴더를 못읽어오는 에러 발생
     # 해결 : 절대 경로 기입
     # 기존 : player_img = pygame.image.load('../pictures/cat.png')
     # 수정 : player_img = pygame.image.load(os.path.join('pictures', 'cat.jpg'))
-
-    player_img = pygame.transform.scale(player_img, (105,120)) # 이미지 크기 조정
 
     devil = pygame.Rect(configure.screen_width,configure.screen_height-135-142,135,135) # 135(캐릭터높이) 142(바닥높이) 5(여유)
     devil_img = pygame.image.load(os.path.join('pictures', 'devil.png'))
@@ -409,7 +412,11 @@ def main(speed_plus,stage):
         elif va == 3 :
             screen.blit(player_img_jump, player)
         else :
-            screen.blit(player_img, player)
+            # 플레이어(수정)
+            if stage == 1 :
+                screen.blit(player_img2, player)
+            else:
+                screen.blit(player_img, player)
         screen.blit(foothold_img, foothold)
 
         # 먹이 추가 및 제거
