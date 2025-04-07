@@ -63,7 +63,7 @@ def main(speed_plus,stage):
 
     # 게임 속도
     clock = pygame.time.Clock()
-    speed = 0.5
+    speed = 1
     devil_speed = 0.3
 
     # 중력 표현
@@ -126,14 +126,14 @@ def main(speed_plus,stage):
     def play_star():
         stars2 = []
         start = random.randint(200, int(configure.screen_width * 0.3))
-        for _ in range(4):
+        for _ in range(2):
             if start > configure.screen_width * 0.9:
                 continue
             c = random.randint(3, 6)
-            end = min(start + (100 * c), int(configure.screen_width * 0.9))
+            end = min(start + (200 * c), int(configure.screen_width * 0.9))
             b = random.randint(start, end)
-            start = b + 100
-            stars2.append({"rect": pygame.Rect(b, 0, 87, 81), "tt": 30})
+            start = b + (50*c)
+            stars2.append({"rect": pygame.Rect(b, 0, 67, 61), "tt": 30}) # 87,81
         return stars2
 
     stars2 = play_star()
@@ -339,7 +339,7 @@ def main(speed_plus,stage):
             stars = new_stars  # 리스트 갱신
 
         # 별 아래로 내리기(추가)
-        if stage == 3:
+        if stage == 1:
             new_stars2 = []
 
             for star in stars2:
@@ -356,17 +356,17 @@ def main(speed_plus,stage):
 
                 if star["tt"] > 0:
                     star["tt"] -= 1
-                    star_img = pygame.image.load('pictures/meteo_star.png')
+                    star_img2 = pygame.image.load('pictures/meteo_star.png')
                 else:
-                    star_img = pygame.image.load('pictures/meteo.png')
+                    star_img2 = pygame.image.load('pictures/meteo.png')
 
-                screen.blit(star_img, star["rect"])
+                screen.blit(star_img2, star["rect"])
 
             stars2 = new_stars2 if new_stars2 else play_star()
 
         # 점프 구현
         player.top = player.top + y_vel
-        y_vel += 1
+        y_vel += 0.9
         if player.bottom >= (configure.screen_height * 0.85):
             player.bottom = (configure.screen_height * 0.85)
             y_vel = 0

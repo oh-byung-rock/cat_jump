@@ -20,6 +20,7 @@ def create(screen_width, screen_height, foothold,feeds,feeds1):
         feeds1.append(feed1)
         a = b + 80
         e = e + 1
+
     feed_img1 = pygame.image.load(os.path.join('pictures', 'feed.png'))
     feed_img1 = pygame.transform.scale(feed_img1, (70, 80))  # 객체 맞춰서 이미지를 조정하기
     print('1층생성', e)
@@ -27,6 +28,7 @@ def create(screen_width, screen_height, foothold,feeds,feeds1):
     # 먹이 객체 리스트(2층)
     a1 = foothold.left
     e1 = 0
+
     for i in range(d - e):
         if a1 > foothold.right - 70:
             break
@@ -42,4 +44,5 @@ def create(screen_width, screen_height, foothold,feeds,feeds1):
     feed_img = pygame.image.load(os.path.join('pictures', 'feed.png'))
     feed_img = pygame.transform.scale(feed_img, (70, 80))  # 객체 맞춰서 이미지를 조정하기
 
+    # 추가
     return feed_img, feed_img1, feeds, feeds1

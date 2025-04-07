@@ -15,7 +15,7 @@ def create(screen_width, screen_height, foothold,feeds,feeds1):
         if a + (75 * c) > screen_width - 115:
             break
 
-        b = random.randint(a, a + (75 * c))
+        b = random.randint(a + 75, a + (75 * c))
         feed1 = pygame.Rect(b, screen_height - 142 - 80 - 20, 70, 80)  # 142(지면높이) 80(사료높이) 20(여유)
         feeds1.append(feed1)
         a = b + 80

@@ -1,24 +1,19 @@
 import pygame, sys, random, os
 from pygame.locals import * # pygame에 있는 모든기능을 사용
-import screen_value # (추가)
 
-# 발판, 사용자 화면에 크기 맞추기(screen_value.py 생성)
+# 발판, 음식 나타내기
 
 def main():
     # 게임 초기화 정보
     pygame.init()
-
-    # 아래 두개 삭제
-    # screen_width = 1800
-    # screen_height = 900
-
-    # screen 이란 객체를 생성 (수정)
-    screen = pygame.display.set_mode((screen_value.screen_width,screen_value.screen_height))
+    screen_width = 1800
+    screen_height = 900
+    # screen 이란 객체를 생성
+    screen = pygame.display.set_mode((screen_width,screen_height))
     # 제목 생성
     pygame.display.set_caption('cat game')
     bgImage = pygame.image.load('pictures/background.jpg')
-    # (수정)
-    bgImage = pygame.transform.scale(bgImage, (screen_value.screen_width,screen_value.screen_height))
+    bgImage = pygame.transform.scale(bgImage, (screen_width, screen_height))
 
     # 플레이어 생성
     # 가로 105, 세로 120 객체를 생성, 이후 객체의 왼쪽상단점의 위치를 다음 좌표로 설정
@@ -38,8 +33,8 @@ def main():
     player_img_jump = pygame.image.load(os.path.join('pictures', 'cat_jump.png'))
     player_img_jump = pygame.transform.scale(player_img_jump, (105, 120))
 
-    # 발판 생성(추가)(추가2)
-    foothold = pygame.Rect((screen_value.screen_width + 105) / 2, (screen_value.screen_height) / 2, 345, 81)
+    # 발판 생성(추가)
+    foothold = pygame.Rect((screen_width + 105) / 2, (screen_height) / 2, 345, 81)
     foothold_img = pygame.image.load(os.path.join('pictures', 'foothold.png'))
     foothold_img = pygame.transform.scale(foothold_img, (345, 81))  # 가로, 세로
 
@@ -85,7 +80,7 @@ def main():
         if key[K_LEFT] and player.left >= 0 :
             player.left = player.left - speed * dt
             va = 1 # 왼쪽 상태값
-        elif key[K_RIGHT] and player.right <= screen_value.screen_width:
+        elif key[K_RIGHT] and player.right <= screen_width:
             player.right = player.right + speed * dt
             va = 2 # 오른쪽 상태값
         else :
@@ -94,10 +89,8 @@ def main():
         # 점프 구현
         player.top = player.top + y_vel
         y_vel += 1
-
-        # 밑바닥은 전체높이의 15% 임으로 조정된 높이에 맞게끔 조정 (수정)
-        if player.bottom >= (screen_value.screen_height * 0.85):
-            player.bottom = (screen_value.screen_height * 0.85)
+        if player.bottom >= 765:
+            player.bottom = 765
             y_vel = 0
             jump_count = 2
 

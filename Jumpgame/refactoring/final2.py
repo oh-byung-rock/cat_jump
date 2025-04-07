@@ -93,7 +93,7 @@ def main(speed_plus,stage):
     # 스타
     stars = []
     star_speed = 10  # 별 속도
-    is_attack = False  # 공격 여부
+    is_attack = False  # 공격 여부 (잔상 방지)
 
     # 충돌 시 방향 전환을 방지하는 플래그
     devil_direction_changed = False
@@ -249,6 +249,7 @@ def main(speed_plus,stage):
                 gameover = True
                 paused = True
 
+
             # 스타 공격
             if key[K_q] and key[K_RIGHT] and score > 0 and not is_attack:
                 star = {
@@ -358,6 +359,7 @@ def main(speed_plus,stage):
             screen.blit(player_img_jump, player)
         else :
             screen.blit(player_img, player)
+
         screen.blit(foothold_img, foothold)
 
         # 먹이 추가 및 제거

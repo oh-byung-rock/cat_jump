@@ -1,8 +1,9 @@
 import pygame, sys, random, os
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 import screen_value
+from def_create import create
 
-# 먹이를 먹으면 점수 표시
+# 2초 뒤 먹이 자동 생성 및 악당 객체 생성
 
 def main():
     # 게임 초기화 정보
@@ -68,53 +69,16 @@ def main():
     feeds1 = [] # 1층
     feeds = [] # 2층
 
-    # 폰트 객체, 먹이 점수 표기 (추가) _ 한국어 쓰고 싶으면 name을 malgungothic 으로
-    font = pygame.font.SysFont('malgungothic',30,True,False) # italic : 글자 기울어서 표현
+    # 2초 후 함수실행을 위해 (추가)
+    TIMER_EVENT = pygame.USEREVENT + 1
+    timer_active = False
+
+    # 폰트 객체, 먹이 점수 표기
+    font = pygame.font.SysFont('Segoe UI',30,True,False) # italic : 글자 기울어서 표현
     score = 0
 
-    # 먹이 생성함수
-    def create():
-        global feed_img, feed_img1
-
-        # 먹이 객체 리스트(1층)
-        a = int(round(screen_value.screen_width * 0.11,0)) # float은 range 범위가 안되니 int로
-        d = 7 # 7개 생성
-        e = 0
-        for i in range(d):
-            if a > screen_value.screen_width * 0.93 :
-                break
-
-            c = random.randint(4,8)
-            if a+(75*c) > screen_value.screen_width * 0.93:
-                break
-            b= random.randint(a, a+(75*c)) # 먹이 가로 70인데 여유있게 75
-            feed1 = pygame.Rect(b, (screen_value.screen_height * 0.75), 70,80)
-            feeds1.append(feed1)
-            a = b + 80
-            e = e + 1
-        feed_img1 = pygame.image.load('pictures/feed.png')
-        feed_img1 = pygame.transform.scale(feed_img1,(70,80)) # 객체 맞춰서 이미지를 조정하기
-        print('1층생성', e)
-
-        # 먹이 객체 리스트(2층)
-        a1 = foothold.left
-        e1 = 0
-        for i in range(d-e):
-            if a1 > foothold.right - 75 :
-                break
-            c1 = random.randint(1,3)
-            if a1+(75*c1) > foothold.right - 75 :
-                break
-            b1 = random.randint(a1, a1 + (75 * c1))
-            feed = pygame.Rect(b1, (screen_value.screen_height * 0.4), 70,80) # 294
-            feeds.append(feed)
-            a1 = b1 + 80
-            e1 = e1 + 1
-        print('2층 생성',e1)
-        feed_img = pygame.image.load('pictures/feed.png')
-        feed_img = pygame.transform.scale(feed_img,(70,80)) # 객체 맞춰서 이미지를 조정하기
-
-    create()
+    # create에 의해 생성된 feeds, feeds1이 갱신
+    feed_img, feed_img1, feeds, feeds1 = create(screen_value.screen_width, screen_value.screen_height, foothold, feeds,feeds1)
 
     # 게임 실행에대해 처리되는 코드
     while True:
@@ -124,6 +88,12 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
+            # TIMER_EVENT 동작 (추가)
+            if event.type == TIMER_EVENT:
+                feed_img, feed_img1, feeds, feeds1 = create(screen_value.screen_width, screen_value.screen_height, foothold,feeds,feeds1)
+                pygame.time.set_timer(TIMER_EVENT, 0)
+                timer_active = False
 
         screen.blit(bgImage, (0,0))
         # 발판 이미지
@@ -204,7 +174,7 @@ def main():
         else :
             screen.blit(player_img, player)
 
-        # 먹이 추가 및 제거 (수정)
+        # 먹이 추가 및 제거
         # 2층
         for f in feeds:
             if player.colliderect(f):
@@ -216,15 +186,21 @@ def main():
 
         # 1층
         for f in feeds1:
-            if player.colliderect(f): #
+            if player.colliderect(f):
                 print('1층 먹이 제거')
                 feeds1.remove(f)
                 score += 1
             screen.blit(feed_img1, f)
 
-        # 점수 메시지 (추가)
-        score_message = font.render('사료점수 : ' + str(score) , True, (0,0,0))
+        # 점수 메시지
+        score_message = font.render('SCORE : ' + str(score) , True, (0,0,0))
         screen.blit(score_message,(10,10)) # 왼쪽 상단에 메시지를 위치선언
+
+        # 먹이 다먹으면 재생성(추가)
+        if len(feeds) == 0 and len(feeds1) == 0 and not timer_active:
+            print('야호')
+            pygame.time.set_timer(TIMER_EVENT, 2000)
+            timer_active = True
 
         # 플레이어의 행동에대해 결과를 화면에 업데이트 하기위해 선언
         pygame.display.update()
