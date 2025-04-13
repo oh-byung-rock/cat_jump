@@ -9,10 +9,6 @@ def main():
     # 게임 초기화 정보
     pygame.init()
 
-    # 아래 두개 삭제
-    # screen_width = 1800
-    # screen_height = 900
-
     # screen 이란 객체를 생성
     screen = pygame.display.set_mode((screen_value.screen_width,screen_value.screen_height))
     # 제목 생성
@@ -25,6 +21,10 @@ def main():
     player = pygame.Rect( 10, 470, 105,120)
     player_img = pygame.image.load('pictures/cat.png') # 이미지 할당
     player_img = pygame.transform.scale(player_img, (105,120)) # 이미지 크기 조정
+
+    # 악당 생성 (추가)
+    devil = pygame.Rect(500,screen_value.screen_height-135-142,135,135) # 135(캐릭터높이) 142(바닥높이) 5(여유)
+    devil_img = pygame.image.load(os.path.join('pictures', 'devil.png'))
 
     # 플레이어 왼쪽 모습 생성
     player_img_left = pygame.image.load(os.path.join('pictures', 'cat_left.png'))
@@ -46,6 +46,7 @@ def main():
     # 게임 속도
     clock = pygame.time.Clock()
     speed = 0.5
+    devil_speed = 0.3   # 악당 속도(추가)
 
     # 중력 표현
     y_vel = 0
@@ -111,6 +112,16 @@ def main():
             va = 2 # 오른쪽 상태값
         else :
             va = 0 # 일반값
+
+        # 악당 좌우이동구현 (추가)
+        devil.left -= devil_speed * dt
+
+        if devil.right >= screen_value.screen_width:
+            devil.right = screen_value.screen_width
+            devil_speed *= -1
+        elif devil.left <= 0:
+            devil.left = 0
+            devil_speed *= -1
 
         # 점프 구현
         player.top = player.top + y_vel
@@ -195,7 +206,10 @@ def main():
         # 점수 메시지
         score_message = font.render('SCORE : ' + str(score) , True, (0,0,0))
         screen.blit(score_message,(10,10)) # 왼쪽 상단에 메시지를 위치선언
-
+        
+        # 악당 화면구현 (추가)
+        screen.blit(devil_img, devil)
+        
         # 먹이 다먹으면 재생성(추가)
         if len(feeds) == 0 and len(feeds1) == 0 and not timer_active:
             print('야호')
