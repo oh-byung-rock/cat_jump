@@ -1,6 +1,6 @@
 import pygame, sys, random, ctypes, os
 from pygame.locals import * # pygame에 있는 모든기능을 사용
-from create import create
+from create2 import create2
 import configure
 
 # FileNotFoundError 에러 발생시 대처방법
@@ -106,7 +106,7 @@ def main(speed_plus,stage):
     is_attack = False  # 공격 여부
 
     # 충돌 시 방향 전환을 방지하는 플래그
-    devil_direction_changed = False
+    # devil_direction_changed = False
 
     # 버튼 클릭 처리
     back_cu = False
@@ -120,7 +120,7 @@ def main(speed_plus,stage):
     gameover = False
     wendywin = False
 
-    feed_img, feed_img1, feeds, feeds1 = create(configure.screen_width, configure.screen_height, foothold,feeds,feeds1)
+    feed_img, feed_img1, feeds, feeds1 = create2(configure.screen_width, configure.screen_height, foothold,feeds,feeds1)
 
     # 별 떨어지기 (추가)
     def play_star():
@@ -149,7 +149,7 @@ def main(speed_plus,stage):
                 pygame.quit()
                 sys.exit()
             if event.type == TIMER_EVENT:
-                feed_img, feed_img1, feeds, feeds1 = create(configure.screen_width, configure.screen_height, foothold,feeds,feeds1)
+                feed_img, feed_img1, feeds, feeds1 = create2(configure.screen_width, configure.screen_height, foothold,feeds,feeds1)
                 pygame.time.set_timer(TIMER_EVENT, 0)
                 timer_active = False
 
@@ -261,15 +261,17 @@ def main(speed_plus,stage):
             print("plri", player.right)
             # 악당 움직이기 (플레이어의 움직임에 따라)
             if devil.right + 100 < player.left and devil_speed > 0 and player.bottom > foothold.bottom:
-                if devil_speed > 0 and not devil_direction_changed:
+                # if devil_speed > 0 and not devil_direction_changed: 원래코드
+                if devil_speed > 0 :
                     devil_speed = -devil_speed
-                    devil_direction_changed = True  # 방향 전환 후 플래그 활성화
+                    # devil_direction_changed = True  # 방향 전환 후 플래그 활성화
             elif player.right < devil.left - 100 and devil_speed < 0 and player.bottom > foothold.bottom:
-                if devil_speed < 0 and not devil_direction_changed:
+                # if devil_speed < 0 and not devil_direction_changed:
+                if devil_speed < 0 :
                     devil_speed = -devil_speed
-                    devil_direction_changed = True
-            else:
-                devil_direction_changed = False
+            #         devil_direction_changed = True
+            # else:
+            #     devil_direction_changed = False
 
             devil.left -= devil_speed * dt
 
@@ -339,7 +341,7 @@ def main(speed_plus,stage):
             stars = new_stars  # 리스트 갱신
 
         # 별 아래로 내리기(추가)
-        if stage == 1:
+        if stage == 3:
             new_stars2 = []
 
             for star in stars2:
