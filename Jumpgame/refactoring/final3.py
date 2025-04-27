@@ -120,6 +120,8 @@ def main(speed_plus,stage):
     gameover = False
     wendywin = False
 
+    configure.hp_bs = 0
+
     feed_img, feed_img1, feeds, feeds1 = create2(configure.screen_width, configure.screen_height, foothold,feeds,feeds1)
 
     # 별 떨어지기 (추가)
@@ -196,51 +198,11 @@ def main(speed_plus,stage):
         else:
             screen.blit(bgImage, (0,0))
 
-        # 체력바
-        hp100 = pygame.Rect(devil.left + 12, devil.top - 25, 135, 135)
-        if configure.hp_bs == 0:
-            hp100_img = pygame.image.load(os.path.join('pictures', 'hp98.png'))
+        hp100, hp100_img, devil_speed, hp_bs = configure.get_hp_image_and_speed(devil.left, devil.top, speed_plus, devil_speed)
 
-        elif configure.hp_bs == 1:
-            hp100_img = pygame.image.load(os.path.join('pictures', 'hp84.png'))
-            if devil_speed < 0:
-                devil_speed = -0.3
-            else:
-                devil_speed = 0.3
-
-        elif configure.hp_bs == 2:
-            hp100_img = pygame.image.load(os.path.join('pictures', 'hp70.png'))
-            if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (configure.hp_bs-1))
-            else:
-                devil_speed = 0.3 + (speed_plus * (configure.hp_bs-1))
-        elif configure.hp_bs == 3:
-            hp100_img = pygame.image.load(os.path.join('pictures', 'hp56.png'))
-            if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (configure.hp_bs - 1))
-            else:
-                devil_speed = 0.3 + (speed_plus * (configure.hp_bs - 1))
-        elif configure.hp_bs == 4:
-            hp100_img = pygame.image.load(os.path.join('pictures', 'hp42.png'))
-            if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (configure.hp_bs - 1))
-            else:
-                devil_speed = 0.3 + (speed_plus * (configure.hp_bs - 1))
-        elif configure.hp_bs == 5:
-            hp100_img = pygame.image.load(os.path.join('pictures', 'hp28.png'))
-            if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (configure.hp_bs - 1))
-            else:
-                devil_speed = 0.3 + (speed_plus * (configure.hp_bs - 1))
-        elif configure.hp_bs == 6:
-            hp100_img = pygame.image.load(os.path.join('pictures', 'hp14.png'))
-            if devil_speed < 0:
-                devil_speed = -0.3 - (speed_plus * (configure.hp_bs - 1))
-            else:
-                devil_speed = 0.3 + (speed_plus * (configure.hp_bs - 1))
-        else:
-            hp100_img = pygame.image.load(os.path.join('pictures', 'hp0.png'))
-            configure.hp_bs = 0
+        print('티수',hp_bs)
+        if hp_bs >= 7 :
+            print("한번깸")
             paused = True
             wendywin = True
 
