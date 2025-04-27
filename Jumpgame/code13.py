@@ -3,7 +3,7 @@ from pygame.locals import *  # pygame에 있는 모든기능을 사용
 import screen_value
 from def_create import create
 
-# 별 날리기
+# 악당 체력바 표현하기
 
 def main():
     # 게임 초기화 정보
@@ -83,7 +83,7 @@ def main():
     # gameover 상태
     gameover = False
 
-    # 스타(추가)
+    # 스타
     stars = []
     star_speed = 10  # 별 속도
     is_attack = False  # 공격 여부
@@ -107,6 +107,9 @@ def main():
                                                             foothold, feeds, feeds1)
                 pygame.time.set_timer(TIMER_EVENT, 0)
                 timer_active = False
+
+        # 체력바(추가 + screen.value에 추가)
+        hp100, hp100_img, devil_speed = screen_value.get_hp_image_and_speed(devil.left, devil.top, 0, devil_speed)
 
         # 평상시에는 배경화면으로 나타내기
         if gameover == False :
@@ -152,7 +155,7 @@ def main():
         elif devil.colliderect(player):
             gameover = True
 
-        # 스타 공격(추가)
+        # 스타 공격
         if key[K_q] and key[K_RIGHT] and score > 0 and not is_attack:
             star = {
                 "rect": pygame.Rect(player.right, player.top + 20, 60, 60),
@@ -191,7 +194,8 @@ def main():
 
             # 충돌 감지
             if star["rect"].colliderect(devil):
-                # configure.hp_bs += 1
+                # 추가
+                screen_value.hp_bs += 1
                 print("충돌하였습니다.")
                 continue  # 충돌한 별은 리스트에 추가하지 않음 (즉시 삭제됨)
             if star["direction"] == "right" and star["rect"].right < 1750:  # 화면을 벗어나지 않으면 계속 이동
@@ -287,8 +291,10 @@ def main():
         score_message = font.render('SCORE : ' + str(score), True, (0, 0, 0))
         screen.blit(score_message, (10, 10))  # 왼쪽 상단에 메시지를 위치선언
 
-        # 악당 화면구현
+        # 악당 이미지구현
         screen.blit(devil_img, devil)
+        # 체력바 이미지구현(추가)
+        screen.blit(hp100_img, hp100)
 
         # GAMEOVER 구현
         # 악당과 충돌시 GAMEOVER 변환
