@@ -24,8 +24,9 @@ def main():
 
     # 악당 생성
     devil = pygame.Rect(screen_value.screen_width - 135, screen_value.screen_height - 135 - 142, 135,
-                        135)  # 135(캐릭터높이) 142(바닥높이) 5(여유)
+                        635)  # 135(캐릭터높이) 142(바닥높이) 5(여유)
     devil_img = pygame.image.load(os.path.join('pictures', 'devil.png'))
+    devil_img = pygame.transform.scale(devil_img, (135, 135))
 
     # 플레이어 왼쪽 모습 생성
     player_img_left = pygame.image.load(os.path.join('pictures', 'cat_left.png'))
@@ -354,7 +355,8 @@ def main():
             wwa = 0
 
             # 새게임
-            new = pygame.Rect((screen_value.screen_width - 225) / 2, (screen_value.screen_height - 415 + wwa) / 2, 150, 70)
+            new = pygame.Rect((screen_value.screen_width - 225) / 2,
+                              (screen_value.screen_height - 415 + wwa) / 2, 150, 70)
             if new.collidepoint(mouse_x, mouse_y):
                 new_cu = True
                 new_img = pygame.image.load(os.path.join('menu', 'new_yc.png'))
@@ -364,7 +366,8 @@ def main():
             screen.blit(new_img, new)
 
             # 게임종료
-            exit = pygame.Rect((screen_value.screen_width - 225) / 2, (screen_value.screen_height - 105 + wwa) / 2, 225, 105)
+            exit = pygame.Rect((screen_value.screen_width - 225) / 2,
+                               (screen_value.screen_height - 105 + wwa) / 2, 225, 105)
             if exit.collidepoint(mouse_x, mouse_y):
                 exit_cu = True
                 exit_img = pygame.image.load(os.path.join('menu', 'exit_yc.png'))

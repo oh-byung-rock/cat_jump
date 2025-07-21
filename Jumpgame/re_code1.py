@@ -1,11 +1,11 @@
 import pygame, sys
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 
-# 1. player 와 배경객체 추가하기
+# player 와 배경 구현하기 , x버튼 클릭하면 게임종료
 
 def main():
     # 게임 초기화 정보
-    pygame.init() # 초기화 하는코드
+    pygame.init()
     screen_width = 1800
     screen_height = 900
 
@@ -18,31 +18,27 @@ def main():
     bgImag1 = pygame.transform.scale(bgImag1, (screen_width, screen_height))
 
     # 플레이어 생성
-    # 가로 105, 세로 120 객체를 생성, 이후 객체의 왼쪽상단점의 위치를 다음 좌표로 설정
-    player = pygame.Rect( 10, 470, 105, 120 )
-    player_img = pygame.image.load('pictures/cat.png') # 이미지 할당
+    player = pygame.Rect( 10, 470, 105, 120 ) # (x좌표, y좌표, 가로,세로)
+    player_img = pygame.image.load('pictures/cat.png') # 이미지 선택
     player_img = pygame.transform.scale(player_img, (105,120)) # 이미지 크기 조정
 
-    # 원하는 크기에 객체를 생성합니다. (Rect)
-    # 이미지를 선택하고(image.load) 크기를 객체에 맞게 조절합니다.(scale)
-    # 객체에 조절한 이미지를 짝지읍니다. (blit)
-    # blit는 bit block transfer의 약자로
-
-    # 게임 속도
+    # 전반적인 게임 속도
     clock = pygame.time.Clock()
 
-    # 게임 실행에대해 처리되는 코드
+    # 게임 실행 관련 코드
     while True:
         dt = clock.tick(60) # 1초에 60번(hz) 업데이트
-        # 기능구현 1단계 : x 표시 누르면 시스템 종료하기
+
+        # 우측상단 x 표시 누르면 시스템 종료하기
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
 
+        # blit는 bit block transfer의 약자로 조정한 이미지를 화면에 나태내는 기능
         screen.blit(bgImag1, (0, 0))
         screen.blit(player_img, player)
 
-        # 플레이어의 행동에대해 결과를 화면에 업데이트 하기위해 선언
+        # 1초에 60번 화면 업데이트
         pygame.display.update()
 main()

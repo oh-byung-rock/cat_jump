@@ -58,6 +58,6 @@ def get_hp_image_and_speed(devil_left, devil_top, speed_plus, devil_speed):
             devil_speed = 0.3 + (speed_plus * (hp_bs - 1))
     else:
         hp100_img = pygame.image.load(os.path.join('pictures', 'hp0.png'))
-        hp_bs = 0
+
 
     return hp100, hp100_img, devil_speed

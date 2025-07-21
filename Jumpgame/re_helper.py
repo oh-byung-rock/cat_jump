@@ -1,4 +1,3 @@
-# resource_helper.py
 import os,sys,pygame
 
 def resource_path(relative_path):
@@ -26,7 +25,6 @@ def load_image_menu(file_name):
     except pygame.error as e:
         print(f"이미지 로딩 실패: {file_name} - {e}")
         return None
-
 
 def load_sound(file_name):
     """사운드 파일(mp3 등) 로딩"""

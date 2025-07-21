@@ -2,13 +2,14 @@ import pygame, sys
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 import screen_value
 
-# 2단 점프 구현, player 화면에 비율맞추기
+# 2단 점프 구현
 
 def main():
     # 게임 초기화 정보
     pygame.init()
     screen_width = 1800
     print('너비',screen_value.screen_width)
+
     screen_height = 900
     # screen 이란 객체를 생성
     screen = pygame.display.set_mode((screen_width,screen_height))
@@ -35,7 +36,7 @@ def main():
 
     # 2단 점프 구현(추가)
     jump_count = 2  # 기본 2회 점프 가능 (더블 점프)
-    is_jumping = False  # 점프 상태 플래그
+    is_jumping = False  # 점프 상태 플래그 , 이거 없으면 1단 점프만됨
 
     # 게임 실행에대해 처리되는 코드
     while True:
@@ -64,6 +65,7 @@ def main():
         if player.bottom >= 765:
             player.bottom = 765
             y_vel = 0
+            # (추가)
             jump_count = 2
 
         # 2단 점프 구현(추가)
@@ -79,9 +81,6 @@ def main():
         # 점프 키에서 손을 떼면 is_jumping 초기화(추가)
         if not key[K_SPACE]:
             is_jumping = False
-
-        if key[K_e]:
-            y_vel = -18
 
         # 플레이어의 행동에대해 결과를 화면에 업데이트 하기위해 선언
         pygame.display.update()

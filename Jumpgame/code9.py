@@ -51,9 +51,6 @@ def main():
     # 중력 표현
     y_vel = 0
 
-    # 속도
-    speed = 0.5
-
     # 2단 점프 구현
     jump_count = 2  # 기본 2회 점프 가능 (더블 점프)
     is_jumping = False  # 점프 상태 플래그

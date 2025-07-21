@@ -1,7 +1,7 @@
 import pygame, sys, random, os
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 
-# 발판, 음식 나타내기
+# 발판 나타내기
 
 def main():
     # 게임 초기화 정보
@@ -94,17 +94,17 @@ def main():
             y_vel = 0
             jump_count = 2
 
-        # 발판 바닥 위로 못뛰게
+        # 발판 바닥 위로 못뛰게(추가)
         elif player.colliderect(foothold) and y_vel > 0:
             player.bottom = foothold.top
             y_vel = 0
             jump_count = 2
             jump_timer = 0
 
-        # 발판 위로 착지
+        # 발판 위로 착지(추가)
         elif player.colliderect(foothold) and y_vel < 0: # 점프할때
             player.top = foothold.bottom
-            y_vel = 1
+            y_vel = 0
 
         # 2단 점프 구현
         # is_jumping의 초기값은 False 입니다.

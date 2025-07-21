@@ -2,15 +2,12 @@ import pygame, sys, random, os
 from pygame.locals import * # pygame에 있는 모든기능을 사용
 import screen_value
 
-# 발판, 사용자 화면에 크기 맞추기(screen_value.py 생성)
+# 먹이 생성하기 (함수추가)
+# 사용자 화면에 크기 맞추기(screen_value.py 생성)
 
 def main():
     # 게임 초기화 정보
     pygame.init()
-
-    # 아래 두개 삭제
-    # screen_width = 1800
-    # screen_height = 900
 
     # screen 이란 객체를 생성
     screen = pygame.display.set_mode((screen_value.screen_width,screen_value.screen_height))

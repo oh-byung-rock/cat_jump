@@ -3,9 +3,9 @@ from pygame.locals import *  # pygame에 있는 모든기능을 사용
 import screen_value
 from def_create import create
 
-# ESC 정지기능 만들기
+# 1stage wendywin에서 next눌러서 2stage 구현
 
-def main():
+def main(speed_plus,stage):
     # 게임 초기화 정보
     pygame.init()
 
@@ -80,14 +80,19 @@ def main():
     overlay1 = pygame.Surface((screen_value.screen_width, screen_value.screen_height), pygame.SRCALPHA)
     overlay1.fill((0, 0, 0))
 
-    # gameover 상태
+    # 승리 및 게임오버
     gameover = False
+    wendywin = False
 
-    # paused 상태(추가)
+    # paused 상태
     paused = False
     esc_cu = False
+    next_cu = False
+    back_cu = False
+    new_cu = False
+    exit_cu = False
 
-    # esc 창 만들기(추가)
+    # esc 창 만들기
     overlay = pygame.Surface((screen_value.screen_width, screen_value.screen_height), pygame.SRCALPHA)
     overlay.fill((0, 0, 0, 180))
 
@@ -96,14 +101,31 @@ def main():
     star_speed = 10  # 별 속도
     is_attack = False  # 공격 여부
 
+    screen_value.hp_bs = 0
+
     # create에 의해 생성된 feeds, feeds1이 갱신
-    feed_img, feed_img1, feeds, feeds1 = create(screen_value.screen_width, screen_value.screen_height, foothold, feeds,
-                                                feeds1)
+    feed_img, feed_img1, feeds, feeds1 = create(screen_value.screen_width, screen_value.screen_height, foothold, feeds,feeds1)
+
+    # 별 떨어지기 (추가)
+    def play_star():
+        stars2 = []
+        start = random.randint(200, int(screen_value.screen_width * 0.3))
+        for _ in range(4):
+            if start > screen_value.screen_width * 0.9:
+                continue
+            c = random.randint(3, 6)
+            end = min(start + (200 * c), int(screen_value.screen_width * 0.9))
+            b = random.randint(start, end)
+            start = b + (50*c)
+            stars2.append({"rect": pygame.Rect(b, 0, 67, 61), "tt": 30}) # 87,81
+        return stars2
+
+    stars2 = play_star()
+    star_speed2, star_left_speed2 = 5, 2
 
     # 게임 실행에대해 처리되는 코드
     while True:
         dt = clock.tick(60)  # 1초에 60번(hz) 업데이트
-
         # 기능구현 1단계 : x 표시 누르면 시스템 종료하기
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -117,15 +139,32 @@ def main():
                 pygame.time.set_timer(TIMER_EVENT, 0)
                 timer_active = False
 
-            # esc 눌렀을때 동작 (추가)
+            # esc 눌렀을때 동작
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     print('esc 클릭됨')
                     paused = True
                     esc_cu = True
 
-        # 체력바
-        hp100, hp100_img, devil_speed = screen_value.get_hp_image_and_speed(devil.left, devil.top, 0, devil_speed)
+            if event.type == MOUSEBUTTONDOWN and back_cu:
+                paused = False
+                esc_cu = False
+
+            if event.type == MOUSEBUTTONDOWN and new_cu:
+                main(0,1) ###### new 버튼기능 main() 매개변수 사용시 이걸로 변경
+
+            if event.type == MOUSEBUTTONDOWN and exit_cu:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == MOUSEBUTTONDOWN and next_cu:
+                if stage == 1:
+                    main(0.05,2)
+                elif stage == 2:
+                    main(0.05, 3)
+
+        # 체력바(추가 + screen.value에 추가)
+        hp100, hp100_img, devil_speed = screen_value.get_hp_image_and_speed(devil.left, devil.top, speed_plus, devil_speed)
 
         # 평상시에는 배경화면으로 나타내기
         if gameover == False :
@@ -134,11 +173,18 @@ def main():
         # 발판 이미지
         screen.blit(foothold_img, foothold)
 
+        # screen_value에서 61번째 코드(hp_bs = 0) 삭제하기
+        if screen_value.hp_bs >= 7 :
+            print("한번깸")
+            paused = True
+            wendywin = True
+
         # 키보드로 플레이어 조종
         key = pygame.key.get_pressed()
 
-        # 정지 상태에서 모든 행동 통제 (추가)
+        # 정지 상태에서 모든 행동 통제
         if paused == False:
+
             # 플레이어 좌우로 움직이기
             if key[K_LEFT] and player.left >= 0:
                 player.left = player.left - speed * dt
@@ -148,6 +194,7 @@ def main():
                 va = 2  # 오른쪽 상태값
             else:
                 va = 0  # 일반값
+
             # 악당 움직이기 (플레이어의 움직임에 따라)
             if devil.right + 100 < player.left and devil_speed > 0 and player.bottom > foothold.bottom:
             # devil의 오른쪽 영역보다 player의 왼쪽이 더 큰 경우 = 악당보다 오른쪽에 player가 있는경우
@@ -171,6 +218,7 @@ def main():
                 devil_speed *= -1
             elif devil.colliderect(player):
                 gameover = True
+                paused = True
 
             # 스타 공격
             if key[K_q] and key[K_RIGHT] and score > 0 and not is_attack:
@@ -211,7 +259,6 @@ def main():
 
                 # 충돌 감지
                 if star["rect"].colliderect(devil):
-                    # 추가
                     screen_value.hp_bs += 1
                     print("충돌하였습니다.")
                     continue  # 충돌한 별은 리스트에 추가하지 않음 (즉시 삭제됨)
@@ -223,6 +270,31 @@ def main():
                 screen.blit(star_img, star["rect"])  # 별 이미지 그리기
 
             stars = new_stars  # 리스트 갱신
+
+        # 별 아래로 내리기(추가)
+        if stage == 3:
+            new_stars2 = []
+            for star in stars2:
+                star["rect"].top += star_speed2  # 별이 아래로 이동
+                star["rect"].left -= star_left_speed2  # 별이 왼쪽으로 이동
+
+                if star["rect"].colliderect(player):
+                    gameover = True
+                    paused = True
+                elif star["rect"].top >= screen_value.screen_height * 0.8:
+                    new_stars2 = []
+                else:
+                    new_stars2.append(star)
+
+                if star["tt"] > 0:
+                    star["tt"] -= 1
+                    star_img2 = pygame.image.load('pictures/meteo_star.png')
+                else:
+                    star_img2 = pygame.image.load('pictures/meteo.png')
+
+                screen.blit(star_img2, star["rect"])
+
+            stars2 = new_stars2 if new_stars2 else play_star()
 
         # 점프 구현
         player.top = player.top + y_vel
@@ -302,6 +374,11 @@ def main():
                 print('1층 먹이 제거')
                 feeds1.remove(f)
                 score += 1
+            if stage != 1:
+                if devil.colliderect(f):
+                    if screen_value.hp_bs > 0:
+                        screen_value.hp_bs -= 1
+                    feeds1.remove(f)
             screen.blit(feed_img1, f)
 
         # 점수 메시지
@@ -310,17 +387,8 @@ def main():
 
         # 악당 이미지구현
         screen.blit(devil_img, devil)
-        # 체력바 이미지구현(추가)
+        # 체력바 이미지구현
         screen.blit(hp100_img, hp100)
-
-        # GAMEOVER 구현
-        # 악당과 충돌시 GAMEOVER 변환
-        if gameover == True :
-            screen.blit(overlay1, (0, 0))
-            lose = pygame.Rect((screen_value.screen_width - 400) / 2, (screen_value.screen_height - 580) / 2, 350, 160)
-            lose_img = pygame.image.load(os.path.join('menu', 'gameover.png'))
-            lose_img = pygame.transform.scale(lose_img, (400, 200))
-            screen.blit(lose_img, lose)
 
         # 먹이 다먹으면 재생성
         if len(feeds) == 0 and len(feeds1) == 0 and not timer_active:
@@ -328,12 +396,81 @@ def main():
             pygame.time.set_timer(TIMER_EVENT, 2000)
             timer_active = True
 
-        # esc 누르면 검은창 띄우기(추가)
+        # esc 누르면 검은창 띄우기
         if paused:
             y_vel = 0  # 고양이가 충돌하자마자 공중에 멈추게하기
             screen.blit(overlay, (0, 0))
 
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+
+            # 메뉴바
+            if wendywin or gameover:
+                wwa = 420
+            else:
+                wwa = 0
+
+            if wendywin:
+                screen.blit(overlay1, (0, 0))
+                win = pygame.Rect((screen_value.screen_width - 400) / 2, (screen_value.screen_height - 580) / 2, 400, 200)
+                win_img = pygame.image.load(os.path.join('menu', 'wendywin.png'))
+                win_img = pygame.transform.scale(win_img, (400, 200))
+                screen.blit(win_img, win)
+
+                if stage == 1 or stage == 2:
+                    next = pygame.Rect((screen_value.screen_width + 350) / 2, (screen_value.screen_height - 415 + wwa) / 2,
+                                       400, 200)
+                    if next.collidepoint(mouse_x, mouse_y):
+                        next_cu = True
+                        next_img = pygame.image.load(os.path.join('menu', 'next_yc.png'))
+                    else:
+                        next_cu = False
+                        next_img = pygame.image.load(os.path.join('menu', 'next_nc.png'))
+                    screen.blit(next_img, next)
+
+            elif gameover:
+                screen.blit(overlay1, (0, 0))
+                lose = pygame.Rect((screen_value.screen_width - 400) / 2, (screen_value.screen_height - 580) / 2, 350, 160)
+                lose_img = pygame.image.load(os.path.join('menu', 'gameover.png'))
+                lose_img = pygame.transform.scale(lose_img, (400, 200))
+                screen.blit(lose_img, lose)
+            else:
+                y_vel = 0  # 고양이가 충돌하자마자 공중에 멈추게하기
+                screen.blit(overlay, (0, 0))
+
+            # 새게임
+            new = pygame.Rect((screen_value.screen_width - 225) / 2, (screen_value.screen_height - 415 + wwa) / 2, 150, 70)
+            if new.collidepoint(mouse_x, mouse_y):
+                new_cu = True
+                new_img = pygame.image.load(os.path.join('menu', 'new_yc.png'))
+            else:
+                new_cu = False
+                new_img = pygame.image.load(os.path.join('menu', 'new_nc.png'))
+            screen.blit(new_img, new)
+
+            # 게임종료
+            exit = pygame.Rect((screen_value.screen_width - 225) / 2, (screen_value.screen_height - 105 + wwa) / 2, 225, 105)
+            if exit.collidepoint(mouse_x, mouse_y):
+                exit_cu = True
+                exit_img = pygame.image.load(os.path.join('menu', 'exit_yc.png'))
+                exit_img = pygame.transform.scale(exit_img, (225, 105))
+            else:
+                exit_cu = False
+                exit_img = pygame.image.load(os.path.join('menu', 'exit_nc.png'))
+                exit_img = pygame.transform.scale(exit_img, (225, 105))
+            screen.blit(exit_img, exit)
+
+            if esc_cu:
+                # 뒤로가기
+                back = pygame.Rect((screen_value.screen_width - 225) / 2, (screen_value.screen_height + 205) / 2, 225, 105)
+                if back.collidepoint(mouse_x, mouse_y):
+                    back_cu = True
+                    back_img = pygame.image.load(os.path.join('menu', 'back_yc.png'))
+                else:
+                    back_cu = False
+                    back_img = pygame.image.load(os.path.join('menu', 'back_nc.png'))
+                screen.blit(back_img, back)
+
         # 플레이어의 행동에대해 결과를 화면에 업데이트 하기위해 선언
         pygame.display.update()
 
-main()
+main(0,1)
